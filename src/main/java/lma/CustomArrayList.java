@@ -3,6 +3,7 @@ package lma;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class CustomArrayList<T> {
     private static final int DEFAULT_CAPACITY = 10;
@@ -32,46 +33,14 @@ public class CustomArrayList<T> {
         this(list.toArray());
     }
 
+    private boolean checkIndex(int index) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        return true;
+    }
+
     private void grow() {
-        capacity *= 2;
+        capacity = (capacity * 3) / 2 + 1;
         elements = Arrays.copyOf(elements, capacity);
-    }
-
-    public void add(T element) {
-        if (size == capacity) {
-            grow();
-        }
-        elements[size++] = element;
-    }
-
-    public int firstIndexOf(T element) {
-        for (int i = 0; i < size; i++) {
-            if (element.equals(elements[i])) return i;
-        }
-        return -1;
-    }
-
-    public T delete(int index) {
-        if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
-        T element = elements[index];
-        System.arraycopy(elements, index + 1, elements, index, size - index - 1);
-        size--;
-        return element;
-    }
-
-    public T remove(T element) {
-        if (!contains(element)) throw new NoSuchElementException();
-        int index = firstIndexOf(element);
-        return delete(index);
-    }
-
-    public T get(int index) {
-        if (index < 0 || index >= size) throw new IndexOutOfBoundsException();
-        return elements[index];
-    }
-
-    public boolean contains(T element) {
-        return firstIndexOf(element) > -1;
     }
 
     public void ensureCapacity(int capacity) {
@@ -85,8 +54,21 @@ public class CustomArrayList<T> {
         elements = toArray();
     }
 
-    public T[] toArray() {
-        return Arrays.copyOf(elements, size);
+    public void add(T element) {
+        if (size == capacity) {
+            grow();
+        }
+        elements[size++] = element;
+    }
+
+    public void add(int index, T element) {
+        checkIndex(index);
+        if (size == capacity) {
+            grow();
+        }
+        System.arraycopy(elements, index, elements, index + 1, size - index);
+        elements[index] = element;
+        size++;
     }
 
     public void addAll(T[] elements) {
@@ -96,8 +78,45 @@ public class CustomArrayList<T> {
         System.arraycopy(elements, 0, this.elements, size, elements.length);
     }
 
-    public void addAll(CustomArrayList<T> list) {
-        addAll(list.toArray());
+    public int indexOf(T element) {
+        for (int i = 0; i < size; i++) {
+            if (element.equals(elements[i])) return i;
+        }
+        return -1;
+    }
+
+    public T delete(int index) {
+        checkIndex(index);
+        T element = elements[index];
+        System.arraycopy(elements, index + 1, elements, index, size - index - 1);
+        size--;
+        return element;
+    }
+
+    public T remove(T element) {
+        if (!contains(element)) throw new NoSuchElementException();
+        int index = indexOf(element);
+        return delete(index);
+    }
+
+    public T get(int index) {
+        checkIndex(index);
+        return elements[index];
+    }
+
+    public T set(int index, T element) {
+        checkIndex(index);
+        T oldElement = elements[index];
+        elements[index] = element;
+        return oldElement;
+    }
+
+    public boolean contains(T element) {
+        return indexOf(element) > -1;
+    }
+
+    public T[] toArray() {
+        return Arrays.copyOf(elements, size);
     }
 
     public boolean isEmpty() {
@@ -111,5 +130,18 @@ public class CustomArrayList<T> {
     @Override
     public String toString() {
         return Arrays.toString(toArray());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomArrayList<?> that = (CustomArrayList<?>) o;
+        return capacity == that.capacity && size == that.size && Objects.deepEquals(elements, that.elements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Arrays.hashCode(elements), capacity, size);
     }
 }
