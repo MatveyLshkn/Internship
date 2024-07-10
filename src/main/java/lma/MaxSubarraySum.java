@@ -4,15 +4,11 @@ package lma;
 public class MaxSubarraySum {
     public static int sequence(int[] arr) {
         int max = 0;
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] > max) max = i;
-            int sum = arr[i];
-            for (int j = i + 1; j < arr.length; j++) {
-                sum += arr[j];
-                if (sum > max) {
-                    max = sum;
-                }
-            }
+        int currSum = 0;
+        for (int num : arr) {
+            currSum += num;
+            if (currSum < 0) currSum = 0;
+            max = Math.max(max, currSum);
         }
         return max;
     }
