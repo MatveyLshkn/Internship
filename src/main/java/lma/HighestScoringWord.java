@@ -1,30 +1,35 @@
 package lma;
 
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 //https://www.codewars.com/kata/57eb8fcdf670e99d9b000272
 public class HighestScoringWord {
     public static String high(String s) {
         int maxValue = 0;
         String maxString = "";
-        StringBuilder sb = new StringBuilder();
+        String currString = "";
         int value = 0;
         for (int i = 0; i <= s.length(); i++) {
             if (i == s.length() || s.charAt(i) == ' ') {
                 if (maxValue < value) {
-                    maxString = sb.toString();
+                    maxString = currString;
                     maxValue = value;
                 }
-                sb = new StringBuilder();
+                currString = "";
                 value = 0;
             } else {
                 value += s.charAt(i) - 'a' + 1;
-                sb.append(s.charAt(i));
+                currString += s.charAt(i);
             }
         }
         return maxString;
     }
 
-    public static void main(String[] args) {
-        System.out.println(high("aa b"));
+    public static String high2(String s) {
+        return Arrays.stream(s.split(" "))
+                .max(Comparator.comparing(str -> str.chars().map(ch -> ch - 'a' + 1).sum())).get();
     }
+
 }
