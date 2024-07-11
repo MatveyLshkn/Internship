@@ -9,14 +9,13 @@ public class DuplicateEncoder {
         char[] wordAsLowercaseCharArray = word.toLowerCase().toCharArray();
         Map<Character, Integer> map = new HashMap<>();
         for (char c : wordAsLowercaseCharArray) {
-
             map.put(c, map.getOrDefault(c, 0) + 1);
         }
-        StringBuilder result = new StringBuilder();
+        String result = "";
         for (char c : wordAsLowercaseCharArray) {
             if (map.get(c) > 1) {
-                result.append(")");
-            } else result.append("(");
+                result += ")";
+            } else result += "(";
         }
         return result.toString();
     }
