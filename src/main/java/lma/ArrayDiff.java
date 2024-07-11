@@ -17,12 +17,14 @@ public class ArrayDiff {
         }
         List<Integer> ans = new ArrayList<>();
         for (int i = 0; i < a.length; i++) {
-            if(set.contains(a[i])) {
+            if (set.contains(a[i])) {
                 ans.add(a[i]);
             }
         }
         return ans.stream().mapToInt(i -> i).toArray();
     }
 
-
+    public static int[] arrayDiff2(int[] a, int[] b) {
+        return Arrays.stream(a).filter(aElem -> Arrays.stream(b).noneMatch(bElem -> bElem == aElem)).toArray();
+    }
 }
