@@ -7,7 +7,7 @@ public class SumOfDigits {
         int sum = 0;
         while (n != 0) {
             int remains = n % 10;
-            n /= 10;
+            n = n / 10;
             sum += remains;
         }
         return digital_root(sum);
