@@ -6,13 +6,21 @@ public class PersistentBugger {
         int count = 0;
         while (n % 10 != n) {
             count++;
-            int mult = 1;
+            long mult = 1;
             while (n > 0) {
-                mult *= n % 10;
-                n /= 10;
+                mult = mult * (n % 10);
+                n = n / 10;
             }
             n = mult;
+        }
+        return count;
+    }
 
+    public static int persistence2(long n) {
+        int count = 0;
+        while (n % 10 != n) {
+            count++;
+            n = Long.toString(n).chars().reduce(1, (a, b) -> a * (b - '0'));
         }
         return count;
     }
