@@ -5,7 +5,7 @@ public class FindTheOddInt {
     public static int findIt(int[] a) {
         int odd = 0;
         for (int i : a) {
-            odd ^= i;
+            odd = odd ^ i;
         }
         return odd;
     }
