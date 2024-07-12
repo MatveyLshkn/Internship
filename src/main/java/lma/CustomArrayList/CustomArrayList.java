@@ -1,18 +1,17 @@
-package lma;
+package lma.CustomArrayList;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class CustomArrayList<T> {
-    private static final int DEFAULT_CAPACITY = 10;
+    private final int DEFAULT_CAPACITY = 10;
 
-    private T[] elements;
+    T[] elements;
 
-    private int capacity;
+    int capacity;
 
-    private int size;
+    int size;
 
     public CustomArrayList() {
         elements = (T[]) new Object[DEFAULT_CAPACITY];
@@ -30,52 +29,29 @@ public class CustomArrayList<T> {
     }
 
     public CustomArrayList(CustomArrayList<T> list) {
-        this(list.toArray());
-    }
-
-    private boolean checkIndex(int index) {
-        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
-        return true;
-    }
-
-    private void grow() {
-        capacity = (capacity * 3) / 2 + 1;
-        elements = Arrays.copyOf(elements, capacity);
-    }
-
-    public void ensureCapacity(int capacity) {
-        if (this.capacity < capacity) {
-            this.capacity = capacity;
-            elements = Arrays.copyOf(elements, capacity);
-        }
-    }
-
-    public void trimToSize() {
-        elements = toArray();
+        this(ListUtil.toArray(list));
     }
 
     public void add(T element) {
         if (size == capacity) {
-            grow();
+            ListUtil.grow(this);
         }
         elements[size++] = element;
     }
 
     public void add(int index, T element) {
-        checkIndex(index);
+        ListUtil.checkIndex(this, index);
         if (size == capacity) {
-            grow();
+            ListUtil.grow(this);
         }
-        System.arraycopy(elements, index, elements, index + 1, size - index);
+        ListUtil.shiftElements(this, index, index + 1);
         elements[index] = element;
         size++;
     }
 
-    public void addAll(T[] elements) {
-        if (elements.length > capacity - size) {
-            ensureCapacity(capacity + elements.length);
-        }
-        System.arraycopy(elements, 0, this.elements, size, elements.length);
+    public void addAll(CustomArrayList<T> list) {
+        ListUtil.ensureCapacity(this, size + list.size);
+        ListUtil.moveAll(list, this);
     }
 
     public int indexOf(T element) {
@@ -86,9 +62,9 @@ public class CustomArrayList<T> {
     }
 
     public T delete(int index) {
-        checkIndex(index);
+        ListUtil.checkIndex(this, index);
         T element = elements[index];
-        System.arraycopy(elements, index + 1, elements, index, size - index - 1);
+        ListUtil.shiftElements(this, index + 1, index);
         size--;
         return element;
     }
@@ -100,12 +76,12 @@ public class CustomArrayList<T> {
     }
 
     public T get(int index) {
-        checkIndex(index);
+        ListUtil.checkIndex(this, index);
         return elements[index];
     }
 
     public T set(int index, T element) {
-        checkIndex(index);
+        ListUtil.checkIndex(this, index);
         T oldElement = elements[index];
         elements[index] = element;
         return oldElement;
@@ -113,10 +89,6 @@ public class CustomArrayList<T> {
 
     public boolean contains(T element) {
         return indexOf(element) > -1;
-    }
-
-    public T[] toArray() {
-        return Arrays.copyOf(elements, size);
     }
 
     public boolean isEmpty() {
@@ -129,7 +101,7 @@ public class CustomArrayList<T> {
 
     @Override
     public String toString() {
-        return Arrays.toString(toArray());
+        return Arrays.toString(ListUtil.toArray(this));
     }
 
     @Override
