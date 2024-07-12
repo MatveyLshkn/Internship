@@ -58,15 +58,15 @@ public class CustomHashMap<K, V> {
 
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
-    private Node<K, V>[] elements;
+    Node<K, V>[] elements;
 
-    private int size;
+    int size;
 
-    private int capacity;
+    int capacity;
 
-    private float loadFactor;
+    float loadFactor;
 
-    private int threshold;
+    int threshold;
 
     public CustomHashMap(int capacity, float loadFactor) {
         this.capacity = capacity;
@@ -79,50 +79,20 @@ public class CustomHashMap<K, V> {
         this(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
     }
 
-    private int calculatePos(K key) {
-        if (key == null) {
-            return 0;
-        }
-        return key.hashCode() & (capacity - 1);
-    }
-
-    private void addNode(K key, V value, int hash) {
-        if (size == threshold) {
-            resize();
-        }
-        size++;
-        int pos = calculatePos(key);
-        if (elements[pos] == null) {
-            Node<K, V> node = new Node<>(hash, key, value, null);
-            elements[pos] = node;
-        } else {
-            Node<K, V> node = elements[pos];
-            while (node != null) {
-                if (node.getKey() == null) {
-                    V oldValue = node.getValue();
-                    node.setValue(value);
-                    return;
-                }
-                node = node.next;
-            }
-            Node<K, V> newNode = new Node<>(hash, key, value, elements[pos]);
-            elements[pos] = newNode;
-        }
-    }
-
     private void putForNullKey(V value) {
-        addNode(null, value, 0);
+        MapUtil.addNode(this, null, value, 0);
     }
 
     public void put(K key, V value) {
         if (key == null) {
             putForNullKey(value);
+        } else {
+            MapUtil.addNode(this, key, value, key.hashCode());
         }
-        addNode(key, value, key.hashCode());
     }
 
     public V get(K key) {
-        int index = calculatePos(key);
+        int index = MapUtil.calculatePos(this, key);
         Node<K, V> node = elements[index];
         while (node != null) {
             if (node.getKey() == key || node.getKey().equals(key)) {
@@ -134,7 +104,7 @@ public class CustomHashMap<K, V> {
     }
 
     public boolean containsKey(K key) {
-        int index = calculatePos(key);
+        int index = MapUtil.calculatePos(this, key);
         Node<K, V> node = elements[index];
         while (node != null) {
             if (node.getKey() == key || node.getKey().equals(key)) {
@@ -165,36 +135,7 @@ public class CustomHashMap<K, V> {
 
     public V remove(K key) {
         if (!containsKey(key)) throw new NoSuchElementException("No such key!");
-        size--;
-        int pos = calculatePos(key);
-        Node<K, V> currNode = elements[pos];
-        Node<K, V> prevNode = null;
-        while (currNode != null) {
-            if (currNode.getKey() == key || currNode.getKey().equals(key)) {
-                if (prevNode == null) {
-                    elements[pos] = currNode.next;
-                } else {
-                    prevNode.next = currNode.next;
-                }
-                return currNode.getValue();
-            }
-            prevNode = currNode;
-            currNode = currNode.next;
-        }
-        return null;
-    }
-
-    private void resize() {
-        Node<K, V>[] oldElements = elements;
-        elements = new Node[capacity * 2];
-        threshold = (int) (capacity * loadFactor);
-        size = 0;
-        for (Node<K, V> node : oldElements) {
-            while (node != null) {
-                put(node.getKey(), node.getValue());
-                node = node.next;
-            }
-        }
+        return MapUtil.removeNode(this, key);
     }
 
     public int getSize() {
