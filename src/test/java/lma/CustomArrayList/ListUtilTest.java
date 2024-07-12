@@ -1,20 +1,25 @@
 package lma.CustomArrayList;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ListUtilTest {
+    private CustomArrayList<Integer> list;
 
-    @Test
-    void toArray() {
-        CustomArrayList<Integer> list = new CustomArrayList<>();
+    @BeforeEach
+    void setUp() {
+        list = new CustomArrayList<>();
         list.add(1);
         list.add(2);
         list.add(3);
+    }
 
+    @Test
+    void toArray() {
         Object[] array = ListUtil.toArray(list);
 
         assertThat(array.length).isEqualTo(list.size);
@@ -25,12 +30,8 @@ class ListUtilTest {
 
     @Test
     void trimToSize() {
-        CustomArrayList<Integer> list = new CustomArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-
         int prevCapacity = list.capacity;
+
         ListUtil.trimToSize(list);
         Object[] elems = list.elements;
 
@@ -41,8 +42,6 @@ class ListUtilTest {
 
     @Test
     void grow() {
-        CustomArrayList<Integer> list = new CustomArrayList<>();
-
         int prevCapacity = list.capacity;
         ListUtil.grow(list);
 
@@ -52,22 +51,15 @@ class ListUtilTest {
 
     @Test
     void ensureCapacity() {
-        CustomArrayList<Integer> list = new CustomArrayList<>(3);
-
         int prevCapacity = list.capacity;
-        ListUtil.ensureCapacity(list, 7);
+        ListUtil.ensureCapacity(list, prevCapacity + 10);
 
         assertThat(list.capacity).isNotEqualTo(prevCapacity);
-        assertThat(list.capacity).isEqualTo(7);
+        assertThat(list.capacity).isEqualTo(prevCapacity + 10);
     }
 
     @Test
     void shiftElements() {
-        CustomArrayList<Integer> list = new CustomArrayList<>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-
         ListUtil.shiftElements(list, 2, 1);
 
         assertThat(list.get(1)).isEqualTo(3);
@@ -76,14 +68,12 @@ class ListUtilTest {
     @Test
     void moveAll() {
         CustomArrayList<Integer> list1 = new CustomArrayList<>();
-        list1.add(1);
-        CustomArrayList<Integer> list2 = new CustomArrayList<>();
-        list2.add(2);
-        list2.add(3);
+        list1.add(7);
 
-        ListUtil.moveAll(list2, list1);
+        int prevSize = list1.size;
+        ListUtil.moveAll(list, list1);
 
-        assertThat(list1.size).isEqualTo(3);
-        assertThat(list1.contains(list2.get(1))).isTrue();
+        assertThat(list1.size).isEqualTo(list.size + prevSize);
+        assertThat(list1.contains(list.get(1))).isTrue();
     }
 }
