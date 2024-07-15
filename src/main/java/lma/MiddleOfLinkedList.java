@@ -1,5 +1,6 @@
 package lma;
 
+//https://leetcode.com/problems/middle-of-the-linked-list/description/
 public class MiddleOfLinkedList {
     public ListNode middleNode(ListNode head) {
         ListNode slow = head;
