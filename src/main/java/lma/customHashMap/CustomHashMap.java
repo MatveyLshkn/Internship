@@ -1,62 +1,32 @@
 package lma.customHashMap;
 
+import lombok.*;
+
 import java.util.NoSuchElementException;
 
 public class CustomHashMap<K, V> {
 
+    @Data
+    @AllArgsConstructor
     static class Node<K, V> {
-
+        @ToString.Exclude
+        @EqualsAndHashCode.Exclude
         private final int hash;
 
         private final K key;
 
         private V value;
 
+        @ToString.Exclude
+        @EqualsAndHashCode.Exclude
         private Node<K, V> next;
-
-        public Node(int hash, K key, V value, Node<K, V> next) {
-            this.hash = hash;
-            this.key = key;
-            this.value = value;
-            this.next = next;
-        }
-
-        public int getHash() {
-            return hash;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public Node<K, V> getNext() {
-            return next;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
-
-        public void setNext(Node<K, V> next) {
-            this.next = next;
-        }
-
-        @Override
-        public String toString() {
-            return "Node{" +
-                   "key=" + key +
-                   ", value=" + value +
-                   '}';
-        }
     }
 
     private static final int DEFAULT_CAPACITY = 16;
 
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
+    static final int MAXIMUM_CAPACITY = 1 << 30;
 
     Node<K, V>[] elements;
 
@@ -128,13 +98,17 @@ public class CustomHashMap<K, V> {
     }
 
     public V replace(K key, V value) {
-        if (!containsKey(key)) throw new NoSuchElementException("No such key!");
+        if (!containsKey(key)) {
+            throw new NoSuchKeyException();
+        }
         put(key, value);
         return null;
     }
 
     public V remove(K key) {
-        if (!containsKey(key)) throw new NoSuchElementException("No such key!");
+        if (!containsKey(key)) {
+            throw new NoSuchKeyException();
+        }
         return MapUtil.removeNode(this, key);
     }
 

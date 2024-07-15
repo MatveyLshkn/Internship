@@ -11,10 +11,10 @@ class MapUtilTest {
 
     @Test
     void resize() {
-        CustomHashMap<Integer, Integer> map = new CustomHashMap<>();
-        map.put(1, 1);
-        map.put(2, 2);
-        map.put(3, 3);
+        CustomHashMap<String, Integer> map = new CustomHashMap<>();
+        map.put("Joe", 1);
+        map.put("Rick", 2);
+        map.put("Anton", 3);
         map.put(null, 4);
 
         int prevCapacity = map.capacity;
@@ -22,26 +22,28 @@ class MapUtilTest {
 
         assertThat(map.capacity).isEqualTo(prevCapacity * 2);
         assertThat(map.containsKey(null)).isTrue();
-        assertThat(map.containsKey(5)).isFalse();
+        assertThat(map.containsKey("Alexander")).isFalse();
     }
 
     @Test
     void addNode() {
-        CustomHashMap<Integer, Integer> map = new CustomHashMap<>();
+        CustomHashMap<String, Integer> map = new CustomHashMap<>();
 
         int prevSize = map.size;
 
         MapUtil.addNode(map, null, 4, 0);
+        MapUtil.addNode(map, "Elizabeth", 66, 0);
 
-        assertThat(map.size).isEqualTo(prevSize + 1);
+        assertThat(map.size).isEqualTo(prevSize + 2);
         assertThat(map.containsKey(null)).isTrue();
+        assertThat(map.containsKey("Elizabeth")).isTrue();
     }
 
     @Test
     void calculatePos() {
-        CustomHashMap<Integer, Integer> map = new CustomHashMap<>();
+        CustomHashMap<String, Integer> map = new CustomHashMap<>();
 
-        Integer key = 2;
+        String key = "Test";
 
         assertThat(MapUtil.calculatePos(map, null)).isEqualTo(0);
         assertThat(MapUtil.calculatePos(map, key))
@@ -50,10 +52,10 @@ class MapUtilTest {
 
     @Test
     void removeNode() {
-        CustomHashMap<Integer, Integer> map = new CustomHashMap<>();
-        map.put(1, 1);
-        map.put(2, 2);
-        map.put(3, 3);
+        CustomHashMap<String, Integer> map = new CustomHashMap<>();
+        map.put("Joe", 1);
+        map.put("Rick", 2);
+        map.put("Anton", 3);
         map.put(null, 4);
 
         int prevSize = map.size;

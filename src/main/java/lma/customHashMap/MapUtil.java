@@ -6,8 +6,15 @@ import lombok.experimental.UtilityClass;
 public class MapUtil {
 
     <K, V> void resize(CustomHashMap<K, V> map) {
-        CustomHashMap.Node<K, V>[] oldElements = map.elements;
+        if (map.capacity == CustomHashMap.MAXIMUM_CAPACITY) {
+            map.threshold = Integer.MAX_VALUE;
+            return;
+        }
         map.capacity = map.capacity * 2;
+        if (map.capacity > CustomHashMap.MAXIMUM_CAPACITY) {
+            map.capacity = CustomHashMap.MAXIMUM_CAPACITY;
+        }
+        CustomHashMap.Node<K, V>[] oldElements = map.elements;
         map.elements = new CustomHashMap.Node[map.capacity];
         map.threshold = (int) (map.capacity * map.loadFactor);
         map.size = 0;
@@ -31,7 +38,7 @@ public class MapUtil {
         } else {
             CustomHashMap.Node<K, V> node = map.elements[pos];
             while (node != null) {
-                if (node.getKey() == key || node.getKey().equals(key)) {
+                if (node.getKey() == key || (node.getKey() != null && node.getKey().equals(key))) {
                     V oldValue = node.getValue();
                     node.setValue(value);
                     return;
@@ -56,7 +63,7 @@ public class MapUtil {
         CustomHashMap.Node<K, V> currNode = map.elements[pos];
         CustomHashMap.Node<K, V> prevNode = null;
         while (currNode != null) {
-            if (currNode.getKey() == key || currNode.getKey().equals(key)) {
+            if (currNode.getKey() == key || (currNode.getKey() != null && currNode.getKey().equals(key))) {
                 if (prevNode == null) {
                     map.elements[pos] = currNode.getNext();
                 } else {

@@ -8,14 +8,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CustomHashMapTest {
-    private CustomHashMap<Integer, Integer> customHashMap;
+    private CustomHashMap<String, Integer> customHashMap;
 
     @BeforeEach
     void setUp() {
         customHashMap = new CustomHashMap<>();
-        customHashMap.put(1, 1);
-        customHashMap.put(2, 2);
-        customHashMap.put(3, 3);
+        customHashMap.put("Ivan", 1);
+        customHashMap.put("Matthew", 2);
+        customHashMap.put("Andrew", 3);
         customHashMap.put(null, 4);
     }
 
@@ -26,36 +26,46 @@ class CustomHashMapTest {
 
     @Test
     void get() {
-        assertThat(customHashMap.get(2)).isEqualTo(2);
+        assertThat(customHashMap.get("Matthew")).isEqualTo(2);
         assertThat(customHashMap.get(null)).isEqualTo(4);
     }
 
     @Test
     void containsKey() {
-        assertThat(customHashMap.containsKey(3)).isTrue();
-        assertThat(customHashMap.containsKey(4)).isFalse();
+        assertThat(customHashMap.containsKey("Andrew")).isTrue();
+        assertThat(customHashMap.containsKey("Test")).isFalse();
         assertThat(customHashMap.containsKey(null)).isTrue();
     }
 
     @Test
     void containsValue() {
         assertThat(customHashMap.containsValue(4)).isTrue();
-        assertThat(customHashMap.containsValue(111)).isFalse();
+        assertThat(customHashMap.containsValue(-1)).isFalse();
     }
 
     @Test
     void replace() {
-        customHashMap.replace(2, 99);
-        assertThat(customHashMap.get(2)).isEqualTo(99);
+        customHashMap.replace("Ivan", 99);
+        assertThat(customHashMap.get("Ivan")).isEqualTo(99);
     }
 
     @Test
     void remove() {
         int prevSize = customHashMap.size;
 
-        customHashMap.remove(2);
+        customHashMap.remove("Matthew");
 
-        assertThat(customHashMap.containsKey(2)).isFalse();
+        assertThat(customHashMap.containsKey("Matthew")).isFalse();
         assertThat(customHashMap.size).isEqualTo(prevSize - 1);
+    }
+
+    @Test
+    void checkException() {
+        try {
+            customHashMap.remove("John");
+            fail();
+        } catch (NoSuchKeyException exception) {
+            exception.printStackTrace();
+        }
     }
 }
