@@ -18,6 +18,7 @@ public class MapUtil {
         map.elements = new CustomHashMap.Node[map.capacity];
         map.threshold = (int) (map.capacity * map.loadFactor);
         map.size = 0;
+        map.entries = null;
         for (CustomHashMap.Node<K, V> node : oldElements) {
             while (node != null) {
                 map.put(node.getKey(), node.getValue());
@@ -48,6 +49,9 @@ public class MapUtil {
             CustomHashMap.Node<K, V> newNode = new CustomHashMap.Node<>(hash, key, value, map.elements[pos]);
             map.elements[pos] = newNode;
         }
+        if (map.entries != null) {
+            map.entries.add(new CustomHashMap.Entry<>(key, value));
+        }
     }
 
     <K, V> int calculatePos(CustomHashMap<K, V> map, K key) {
@@ -58,7 +62,6 @@ public class MapUtil {
     }
 
     <K, V> V removeNode(CustomHashMap<K, V> map, K key) {
-        map.size--;
         int pos = calculatePos(map, key);
         CustomHashMap.Node<K, V> currNode = map.elements[pos];
         CustomHashMap.Node<K, V> prevNode = null;
@@ -69,6 +72,10 @@ public class MapUtil {
                 } else {
                     prevNode.setNext(currNode.getNext());
                 }
+                if (map.entries != null) {
+                    map.entries.remove(currNode);
+                }
+                map.size--;
                 return currNode.getValue();
             }
             prevNode = currNode;
@@ -76,5 +83,4 @@ public class MapUtil {
         }
         return null;
     }
-
 }

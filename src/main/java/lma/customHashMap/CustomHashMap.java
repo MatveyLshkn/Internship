@@ -2,7 +2,10 @@ package lma.customHashMap;
 
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 public class CustomHashMap<K, V> {
 
@@ -22,11 +25,20 @@ public class CustomHashMap<K, V> {
         private Node<K, V> next;
     }
 
+    @Data
+    @AllArgsConstructor
+    static class Entry<K, V> {
+        private K key;
+        private V value;
+    }
+
     private static final int DEFAULT_CAPACITY = 16;
 
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     static final int MAXIMUM_CAPACITY = 1 << 30;
+
+    Set<Entry<K, V>> entries;
 
     Node<K, V>[] elements;
 
@@ -110,6 +122,38 @@ public class CustomHashMap<K, V> {
             throw new NoSuchKeyException();
         }
         return MapUtil.removeNode(this, key);
+    }
+
+    public Set<Entry<K, V>> entrySet() {
+        if(entries == null) {
+            entries = new HashSet<>();
+            for (int i = 0; i < elements.length; i++) {
+                Node<K, V> node = elements[i];
+                while (node != null) {
+                    entries.add(new Entry<>(node.getKey(), node.getValue()));
+                    node = node.next;
+                }
+            }
+        }
+        return entries;
+    }
+
+    public Set<K> keySet() {
+        entrySet();
+        Set<K> keySet = new HashSet<>();
+        for(Entry<K, V> entry : entries) {
+            keySet.add(entry.getKey());
+        }
+        return keySet;
+    }
+
+    public Set<V> valueSet() {
+        entrySet();
+        Set<V> valueSet = new HashSet<>();
+        for(Entry<K, V> entry : entries) {
+            valueSet.add(entry.getValue());
+        }
+        return valueSet;
     }
 
     public int getSize() {
