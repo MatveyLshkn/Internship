@@ -5,7 +5,7 @@ import lombok.*;
 import java.util.*;
 
 
-public class LRUCache<K, V> {
+public class LRUCache<K, V> implements Cache<K, V> {
 
     private final Map<K, V> cache;
 
@@ -25,6 +25,7 @@ public class LRUCache<K, V> {
         remove(cache.keySet().iterator().next());
     }
 
+    @Override
     public void put(K key, V value) {
         if (!cache.containsKey(key)) {
             size++;
@@ -35,19 +36,23 @@ public class LRUCache<K, V> {
         }
     }
 
+    @Override
     public boolean contains(K key) {
         return cache.containsKey(key);
     }
 
+    @Override
     public V get(K key) {
         return cache.get(key);
     }
 
+    @Override
     public V remove(K key) {
         size--;
         return cache.remove(key);
     }
 
+    @Override
     public void clear() {
         cache.clear();
         size = 0;

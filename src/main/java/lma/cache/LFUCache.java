@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class LFUCache<K, V> {
+public class LFUCache<K, V> implements Cache<K, V>{
 
     private final Map<K, V> cache;
 
@@ -39,6 +39,7 @@ public class LFUCache<K, V> {
         return removedData;
     }
 
+    @Override
     public void put(K key, V value) {
         if (size >= capacity) {
             removeFirstWithLeastCount();
@@ -55,6 +56,7 @@ public class LFUCache<K, V> {
         size++;
     }
 
+    @Override
     public boolean contains(K key) {
         return cache.containsKey(key);
     }
@@ -69,6 +71,7 @@ public class LFUCache<K, V> {
         map.get(count + 1).add(key);
     }
 
+    @Override
     public V get(K key) {
         if (cache.containsKey(key)) {
             updateCount(key);
@@ -77,6 +80,7 @@ public class LFUCache<K, V> {
         return null;
     }
 
+    @Override
     public V remove(K key) {
         V data = cache.remove(key);
         Integer count = usageCount.remove(key);
@@ -88,6 +92,7 @@ public class LFUCache<K, V> {
         return data;
     }
 
+    @Override
     public void clear() {
         cache.clear();
         usageCount.clear();
