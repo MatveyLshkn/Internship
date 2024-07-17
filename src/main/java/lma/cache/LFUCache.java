@@ -21,8 +21,8 @@ public class LFUCache<K, V> implements Cache<K, V>{
     private int size;
 
     public LFUCache(int capacity) {
-        cache = new HashMap<>(capacity);
-        usageCount = new HashMap<>(capacity);
+        cache = new HashMap<>(capacity * 2);
+        usageCount = new HashMap<>(capacity * 2);
         map = new TreeMap<>();
         this.capacity = capacity;
     }
