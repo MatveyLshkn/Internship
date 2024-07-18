@@ -6,11 +6,29 @@ plugins {
 group = 'lma'
 version = '1.0-SNAPSHOT'
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'lma.task1.ApplicationStarter'
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    with copySpec {
+        from 'src/main/resources'
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+
     testImplementation 'org.assertj:assertj-core:3.26.3'
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
