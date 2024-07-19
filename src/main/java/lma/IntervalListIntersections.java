@@ -11,7 +11,7 @@ public class IntervalListIntersections {
         int secondIndex = 0;
         while (firstIndex < firstList.length && secondIndex < secondList.length) {
             if (secondList[secondIndex][0] <= firstList[firstIndex][1] &&
-                firstList[firstIndex][0] <= secondList[secondIndex][1]) {
+                secondList[secondIndex][1] >= firstList[firstIndex][0] ) {
                 int[] pair = new int[2];
                 pair[0] = Math.max(firstList[firstIndex][0], secondList[secondIndex][0]);
                 pair[1] = Math.min(firstList[firstIndex][1], secondList[secondIndex][1]);
