@@ -2,6 +2,7 @@ package lma;
 
 import javax.swing.tree.TreeNode;
 
+//https://leetcode.com/problems/maximum-depth-of-binary-tree/
 public class MaxDepthOfBinaryTree {
     public int maxDepth(TreeNode root) {
         if (root == null) return 0;
