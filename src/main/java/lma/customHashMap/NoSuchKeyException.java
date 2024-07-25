@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 public class NoSuchKeyException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
 
     @Override
     public void printStackTrace(PrintStream s) {
