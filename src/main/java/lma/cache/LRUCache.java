@@ -1,9 +1,10 @@
 package lma.cache;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.*;
-
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class LRUCache<K, V> implements Cache<K, V> {
 
