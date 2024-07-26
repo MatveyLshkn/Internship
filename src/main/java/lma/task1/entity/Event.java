@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
@@ -18,7 +19,7 @@ public class Event {
 
     private CurrencyEnum currency;
 
-    private Double cost;
+    private BigDecimal cost;
 
     private LocalDate date;
 }

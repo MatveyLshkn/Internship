@@ -11,6 +11,7 @@ import lma.task1.dto.SummaryRow;
 import lma.task1.enums.CurrencyEnum;
 import lma.task1.enums.PeriodEnum;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
@@ -44,7 +45,7 @@ public class CreditCalculator {
     void calculateDebtAndRepayment(SummaryRow summaryRow, Credit credit, List<Transaction> transactions) {
         LocalDate creditDate = credit.getDate();
         double rate = credit.getRate();
-        double debt = credit.getMoney();
+        BigDecimal debt = credit.getMoney();
 
         int period = PeriodEnum.getPeriodDays(credit.getPeriod(), creditDate);
 
@@ -56,13 +57,12 @@ public class CreditCalculator {
 
         for (Transaction transaction : transactions) {
             double adjustedRate = adjustRateForDiscounts(rate, transaction.getDate(), oneDayDiscounts, periodDiscounts);
-            double transactionMoney = adjustMoneyForEvents(transaction);
+            BigDecimal transactionMoney = adjustMoneyForEvents(transaction);
 
             debt = calculateNewDebt(debt, adjustedRate, creditDate, transaction.getDate(), period, transactionMoney);
 
-
-            if (debt <= 0) {
-                summaryRow.setDebt(0.0);
+            if (debt.compareTo(BigDecimal.ZERO) <= 0) {
+                summaryRow.setDebt(BigDecimal.ZERO);
                 summaryRow.setCreditStatus(CreditStatusEnum.DONE);
                 summaryRow.setRepaymentDate(transaction.getDate());
                 return;
@@ -90,15 +90,15 @@ public class CreditCalculator {
         return Math.max(adjustedRate, 0);
     }
 
-    private double adjustMoneyForEvents(Transaction transaction) {
+    private BigDecimal adjustMoneyForEvents(Transaction transaction) {
         LocalDate date = transaction.getDate();
         CurrencyEnum currency = transaction.getCurrency();
-        double money = transaction.getMoney();
+        BigDecimal money = transaction.getMoney();
 
-        double multiplier = eventService.getAll().stream()
-                .filter(ev -> ev.getDate() != null
-                              && !ev.getDate().isAfter(date)
-                              && ev.getCurrency().equals(currency))
+        BigDecimal multiplier = eventService.getAll().stream()
+                .filter(event -> event.getDate() != null
+                                 && !event.getDate().isAfter(date)
+                                 && event.getCurrency().equals(currency))
                 .max(Comparator.comparing(Event::getDate))
                 .map(Event::getCost)
                 .orElseGet(() ->
@@ -108,13 +108,14 @@ public class CreditCalculator {
                             default -> NO_MULTIPLIER_VALUE;
                         }
                 );
-        return money * multiplier;
+
+        return money.multiply(multiplier);
     }
 
-    private double calculateNewDebt(double currentDebt, double rate, LocalDate creditDate,
-                                    LocalDate transactionDate, int period, double transactionMoney) {
+    private BigDecimal calculateNewDebt(BigDecimal currentDebt, double rate, LocalDate creditDate,
+                                        LocalDate transactionDate, int period, BigDecimal transactionMoney) {
         long daysBetween = ChronoUnit.DAYS.between(creditDate, transactionDate);
-        double accruedInterest = currentDebt * (1 + (rate / 100) * daysBetween / period);
-        return accruedInterest - transactionMoney;
+        BigDecimal accruedInterest = currentDebt.multiply(BigDecimal.valueOf((1 + (rate / 100) * daysBetween / period)));
+        return accruedInterest.subtract(transactionMoney);
     }
 }

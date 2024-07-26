@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -22,8 +23,8 @@ public class Settings {
 
     private String[] useDepartments;
 
-    private Double startCostEUR;
+    private BigDecimal startCostEUR;
 
-    private Double startCostUSD;
+    private BigDecimal startCostUSD;
 
 }

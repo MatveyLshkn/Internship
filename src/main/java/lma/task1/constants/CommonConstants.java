@@ -2,6 +2,8 @@ package lma.task1.constants;
 
 import lombok.experimental.UtilityClass;
 
+import java.math.BigDecimal;
+
 @UtilityClass
 public class CommonConstants {
 
@@ -31,5 +33,5 @@ public class CommonConstants {
 
     public static final Integer ERROR_STATUS_CODE = 1;
 
-    public static final Double NO_MULTIPLIER_VALUE = 1.0;
+    public static final BigDecimal NO_MULTIPLIER_VALUE = BigDecimal.ONE;
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -23,5 +24,5 @@ public class Transaction {
 
     private CurrencyEnum currency;
 
-    private Double money;
+    private BigDecimal money;
 }
