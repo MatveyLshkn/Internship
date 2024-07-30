@@ -30,7 +30,7 @@ public class TransactionService {
     }
 
     public List<Transaction> filterTransactionByCreditAndDate(Credit credit, LocalDate dateFrom, LocalDate dateTo) {
-        if (dateFrom == null) {
+        if (dateFrom == null || dateFrom.isBefore(credit.getDate())) {
             dateFrom = credit.getDate();
         }
         LocalDate finalDateFrom = dateFrom;

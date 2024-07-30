@@ -6,7 +6,12 @@ plugins {
 group = 'lma'
 version = '1.0-SNAPSHOT'
 
+task cleanLibsDir(type: Delete) {
+    delete "${buildDir}/libs"
+}
+
 jar {
+    dependsOn(cleanLibsDir)
     manifest {
         attributes(
                 'Main-Class': 'lma.task1.ApplicationStarter'
@@ -16,6 +21,7 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     doLast {
         copy {
             from 'src/main/resources'
@@ -28,13 +34,13 @@ repositories {
     mavenCentral()
 }
 
+apply from: 'versions.gradle'
+
 dependencies {
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation "com.google.code.gson:gson:${versions.gson}"
 
-
-    testImplementation 'org.assertj:assertj-core:3.26.3'
-
-    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation "org.assertj:assertj-core:${versions.assertj}"
+    testImplementation platform("org.junit:junit-bom:${versions.junit}")
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
