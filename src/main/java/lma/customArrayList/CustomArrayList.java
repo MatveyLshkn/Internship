@@ -1,4 +1,4 @@
-package lma.CustomArrayList;
+package lma.customArrayList;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
