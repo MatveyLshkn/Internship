@@ -1,0 +1,8 @@
+ext {
+    versions = [
+            lombok :'8.6',
+            gson   : '2.11.0',
+            assertj: '3.26.3',
+            junit  : '5.10.0'
+    ]
+}
