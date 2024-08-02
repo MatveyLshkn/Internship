@@ -1,0 +1,29 @@
+CREATE SEQUENCE model_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
+
+CREATE SEQUENCE customer_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
+
+CREATE SEQUENCE employee_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
+
+CREATE SEQUENCE discount_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
+
+CREATE SEQUENCE car_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
+
+CREATE SEQUENCE analytics_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
