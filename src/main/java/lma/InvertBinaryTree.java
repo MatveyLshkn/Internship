@@ -5,7 +5,9 @@ import javax.swing.tree.TreeNode;
 //https://leetcode.com/problems/invert-binary-tree/description/
 public class InvertBinaryTree {
     public TreeNode invertTree(TreeNode root) {
-        if (root == null) return root;
+        if (root == null) {
+            return root;
+        }
         TreeNode temp = invertTree(root.right);
         root.right = invertTree(root.left);
         root.left = temp;
