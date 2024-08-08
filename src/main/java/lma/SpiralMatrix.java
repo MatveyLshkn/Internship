@@ -23,7 +23,7 @@ public class SpiralMatrix {
                 result.add(matrix[row][col]);
             }
             cols--;
-            direction *= -1;
+            direction = direction * -1;
         }
         return result;
     }
