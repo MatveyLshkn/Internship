@@ -1,0 +1,14 @@
+CREATE SEQUENCE user_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
+
+CREATE SEQUENCE role_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
+
+CREATE SEQUENCE token_pair_id_sequence
+    AS BIGINT
+    START WITH 101
+    INCREMENT BY 1;
