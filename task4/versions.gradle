@@ -1,0 +1,7 @@
+ext {
+    versions = [
+            lombok    : '1.18.34',
+            postgresql: '42.7.3',
+            junit     : '5.10.0'
+    ]
+}

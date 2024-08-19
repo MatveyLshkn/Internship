@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+group = 'lma'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+task cleanLibsDir(type: Delete) {
+    delete "${buildDir}/libs"
+}
+
+jar {
+    dependsOn(cleanLibsDir)
+    manifest {
+        attributes(
+                'Main-Class': 'lma.Main'
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+apply from: 'versions.gradle'
+
+dependencies {
+    compileOnly "org.projectlombok:lombok:${versions.lombok}"
+    annotationProcessor "org.projectlombok:lombok:${versions.lombok}"
+
+    implementation "org.postgresql:postgresql:${versions.postgresql}"
+}
+
+test {
+    useJUnitPlatform()
+}

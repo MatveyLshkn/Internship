@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16.3-alpine3.20
+    restart: always
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+  liquibase:
+    image: liquibase/liquibase:4.29-alpine
+    volumes:
+      - ./src/main/resources/migration:/migration
+    environment:
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
+      LIQUIBASE_COMMAND_USERNAME: ${DB_USER}
+      LIQUIBASE_COMMAND_PASSWORD: ${DB_PASSWORD}
+      LIQUIBASE_COMMAND_CHANGELOG_FILE: ../migration/changelog-master.yaml
+
+    command:
+      - update
+    depends_on:
+      - postgres
+
+  task4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - liquibase
+
+volumes:
+  postgres_data:

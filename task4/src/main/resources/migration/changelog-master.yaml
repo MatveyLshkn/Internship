@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: ../migration/1-sequence-changelog.sql
+  - include:
+      file: ../migration/2-create-changelog.sql
+  - include:
+      file: ../migration/3-insert-changelog.sql
