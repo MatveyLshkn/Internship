@@ -1,7 +1,5 @@
 package lma;
 
-import javax.swing.tree.TreeNode;
-
 //https://leetcode.com/problems/minimum-depth-of-binary-tree/description/
 public class MinimumDepthOfBinaryTree {
     public int minDepth(TreeNode root) {
