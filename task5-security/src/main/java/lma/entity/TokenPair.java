@@ -24,7 +24,7 @@ public class TokenPair {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_pair_seq_gen")
-    @SequenceGenerator(name = "token_pair_seq_gen", sequenceName = "token_pair_id_sequence")
+    @SequenceGenerator(name = "token_pair_seq_gen", sequenceName = "token_pair_id_sequence", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

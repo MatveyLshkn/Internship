@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lma.constants.CommonConstants;
 import lma.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,11 +17,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static lma.constants.CommonConstants.AUTHORIZATION_HEADER_NAME;
+import static lma.constants.CommonConstants.BEGINNING_AUTH_HEADER_NAME;
+import static lma.constants.CommonConstants.SECRET;
+
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-
-    private static final String AUTHORIZATION = "Authorization";
 
     private final JwtProvider jwtProvider;
 
@@ -31,16 +34,16 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER_NAME);
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            doFilter(request, response, filterChain);
+        if (authorizationHeader == null || !authorizationHeader.startsWith(BEGINNING_AUTH_HEADER_NAME)) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        String jwt = authorizationHeader.substring(7);
+        String jwt = authorizationHeader.substring(BEGINNING_AUTH_HEADER_NAME.length()).trim();
         if (jwt != null) {
-            if(jwtProvider.validateToken(jwt, "secret", request.getRemoteAddr())) {
+            if(jwtProvider.validateToken(jwt, jwtProvider.getKey(), request.getRemoteAddr())) {
                 String username = jwtProvider.extractUsername(jwt);
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userService.loadUserByUsername(username);
