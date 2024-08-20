@@ -15,6 +15,7 @@ import lma.repository.RoleRepository;
 import lma.repository.TokenPairRepository;
 import lma.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ public class AuthService {
     private final UserService userService;
 
     private final UserMapper userMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
 
@@ -67,7 +70,7 @@ public class AuthService {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(userDto.username()));
         }
 
-        if (user.getPassword().equals(userDto.password())) {
+        if (passwordEncoder.matches(userDto.password(), user.getPassword())) {
 
             TokenPair tokenPair = generateTokenPair(user, ip);
             tokenPair.setUser(user);
