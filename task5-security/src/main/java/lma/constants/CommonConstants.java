@@ -7,7 +7,9 @@ import java.time.Instant;
 @UtilityClass
 public class CommonConstants {
 
-    public static final String BASE_AUTH_PATH = "/auth";
+    public static final String BASE_PATH = "/api";
+
+    public static final String BASE_AUTH_PATH = BASE_PATH + "/auth";
 
     public static final String REGISTER_ENDPOINT = BASE_AUTH_PATH + "/register";
 
@@ -15,7 +17,7 @@ public class CommonConstants {
 
     public static final String REFRESH_ENDPOINT = BASE_AUTH_PATH + "/refresh";
 
-    public static final String BASE_GREETING_ENDPOINT = "/greeting";
+    public static final String BASE_GREETING_ENDPOINT = BASE_PATH + "/greeting";
 
     public static final String ADMIN_GREETING_ENDPOINT = BASE_GREETING_ENDPOINT + "/admin";
 
@@ -26,16 +28,6 @@ public class CommonConstants {
     public static final String ROLES_CLAIM_NAME = "roles";
 
     public static final String IP_CLAIM_NAME = "ip";
-
-    public static final String TOKEN_EXPIRED_MESSAGE = "Token expired";
-
-    public static final String UNSUPPORTED_JWT_MESSAGE = "Unsupported JWT";
-
-    public static final String MALFORMED_JWT_MESSAGE = "Malformed JWT";
-
-    public static final String INVALID_SIGNATURE_MESSAGE = "Invalid signature";
-
-    public static final String INVALID_TOKEN_MESSAGE = "Invalid token";
 
     public static final String ADMIN_ROLE_NAME = "ADMIN";
 

@@ -21,12 +21,13 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
-@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,16 +45,18 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 64)
     private String password;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<TokenPair> tokenPairs;
+    private List<TokenPair> tokenPairs = new ArrayList<>();
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "users_roles",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,6 +68,3 @@ public class User implements UserDetails {
         tokenPair.setUser(this);
     }
 }
-
-
-

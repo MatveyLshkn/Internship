@@ -4,8 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lma.constants.CommonConstants;
-import lma.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,16 +17,15 @@ import java.io.IOException;
 
 import static lma.constants.CommonConstants.AUTHORIZATION_HEADER_NAME;
 import static lma.constants.CommonConstants.BEGINNING_AUTH_HEADER_NAME;
-import static lma.constants.CommonConstants.SECRET;
+import static lma.constants.ExceptionConstants.INVALID_TOKEN_EXCEPTION_MESSAGE;
+import static lma.util.JwtUtil.extractUsername;
+import static lma.util.JwtUtil.isTokenValid;
 
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;
-
     private final UserDetailsService userService;
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -43,8 +40,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String jwt = authorizationHeader.substring(BEGINNING_AUTH_HEADER_NAME.length()).trim();
         if (jwt != null) {
-            if(jwtProvider.validateToken(jwt, jwtProvider.getKey(), request.getRemoteAddr())) {
-                String username = jwtProvider.extractUsername(jwt);
+            if (isTokenValid(jwt, request.getRemoteAddr())) {
+                String username = extractUsername(jwt);
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authentication =
@@ -56,6 +53,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setContentType("application/json");
+                response.getWriter().write(INVALID_TOKEN_EXCEPTION_MESSAGE);
+                return;
             }
         }
 
