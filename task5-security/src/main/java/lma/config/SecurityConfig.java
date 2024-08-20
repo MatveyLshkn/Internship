@@ -37,8 +37,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers(BASE_GREETING_ENDPOINT,
@@ -48,9 +47,9 @@ public class SecurityConfig {
                                 .requestMatchers(ADMIN_GREETING_ENDPOINT).hasAuthority(ADMIN_ROLE_NAME)
                                 .requestMatchers(USER_GREETING_ENDPOINT).hasAnyAuthority(USER_ROLE_NAME, ADMIN_ROLE_NAME)
                                 .anyRequest().authenticated()
-                                .and()
-                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                ).build();
+                )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean
