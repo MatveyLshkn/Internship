@@ -48,6 +48,7 @@ public class AuthService {
     private final TokenPairRepository tokenPairRepository;
 
     public TokenPair register(UserRegisterDto userDto, String ip) {
+
         User user = userRepository.getByUsername(userDto.username());
         if (user != null) {
             throw new UserAlreadyExistsException(USER_ALREADY_EXISTS_EXCEPTION_MESSAGE.formatted(userDto.username()));
@@ -58,13 +59,13 @@ public class AuthService {
         TokenPair tokenPair = generateTokenPair(user, ip);
 
         user.addToken(tokenPair);
-
         userRepository.save(user);
 
         return tokenPair;
     }
 
     public TokenPair login(UserLoginDto userDto, String ip) {
+
         User user = userRepository.getByUsername(userDto.username());
         if (user == null) {
             throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(userDto.username()));
@@ -75,15 +76,15 @@ public class AuthService {
             TokenPair tokenPair = generateTokenPair(user, ip);
             tokenPair.setUser(user);
 
-            tokenPairRepository.save(tokenPair);
+            return tokenPairRepository.save(tokenPair);
 
-            return tokenPair;
         } else {
             throw new WrongPasswordException(WRONG_PASSWORD_EXCEPTION_MESSAGE);
         }
     }
 
     public TokenPair refresh(String refreshToken, String ip) {
+
         if (isTokenValid(refreshToken, ip)) {
 
             String username = extractUsername(refreshToken);
@@ -92,17 +93,16 @@ public class AuthService {
                 throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(username));
             }
 
-            TokenPair tokenPair = tokenPairRepository.findByRefreshTokenAndUser_Id(refreshToken ,user.getId());
+            TokenPair tokenPair = tokenPairRepository.findByRefreshTokenAndUser_Id(refreshToken, user.getId());
             if (tokenPair != null) {
                 String accessToken = generateAccessToken(user, ip);
                 tokenPair.setAccessToken(accessToken);
 
-                tokenPairRepository.save(tokenPair);
-
-                return tokenPair;
+                return tokenPairRepository.save(tokenPair);
             } else {
                 throw new InvalidTokenException(INVALID_TOKEN_EXCEPTION_MESSAGE);
             }
+
         } else {
             tokenPairRepository.deleteByRefreshToken(refreshToken);
             throw new InvalidTokenException(INVALID_TOKEN_EXCEPTION_MESSAGE);

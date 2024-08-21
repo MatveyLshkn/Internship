@@ -24,7 +24,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(REGISTER_ENDPOINT)
-    public ResponseEntity<JwtResponse> register(@RequestBody UserRegisterDto userRegisterDto, HttpServletRequest request) {
+    public ResponseEntity<JwtResponse> register(@RequestBody UserRegisterDto userRegisterDto,
+                                                HttpServletRequest request) {
 
         TokenPair registerTokens = authService.register(userRegisterDto, request.getRemoteAddr());
 
@@ -44,7 +45,8 @@ public class AuthController {
     }
 
     @PostMapping(REFRESH_ENDPOINT)
-    public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenDto refreshToken, HttpServletRequest request) {
+    public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenDto refreshToken,
+                                                    HttpServletRequest request) {
 
         TokenPair refreshTokenPair = authService.refresh(refreshToken.refreshToken(), request.getRemoteAddr());
 

@@ -46,7 +46,7 @@ public class User implements UserDetails {
     private String password;
 
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     private List<TokenPair> tokenPairs = new ArrayList<>();
 
     @Builder.Default

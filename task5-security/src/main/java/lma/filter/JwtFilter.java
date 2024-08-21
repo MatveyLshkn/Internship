@@ -32,7 +32,6 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER_NAME);
-
         if (authorizationHeader == null || !authorizationHeader.startsWith(BEGINNING_AUTH_HEADER_NAME)) {
             filterChain.doFilter(request, response);
             return;
@@ -41,18 +40,28 @@ public class JwtFilter extends OncePerRequestFilter {
         String jwt = authorizationHeader.substring(BEGINNING_AUTH_HEADER_NAME.length()).trim();
         if (jwt != null) {
             if (isTokenValid(jwt, request.getRemoteAddr())) {
+
                 String username = extractUsername(jwt);
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (username != null && SecurityContextHolder.getContext()
+                                                .getAuthentication() == null) {
+
                     UserDetails userDetails = userService.loadUserByUsername(username);
+
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
                                     null,
-                                    userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                                    userDetails.getAuthorities()
+                            );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(authentication);
                 }
+
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.setContentType("application/json");

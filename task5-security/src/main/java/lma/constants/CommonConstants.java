@@ -2,12 +2,15 @@ package lma.constants;
 
 import lombok.experimental.UtilityClass;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @UtilityClass
 public class CommonConstants {
 
-    public static final String BASE_PATH = "/api";
+    public static final String API_VERSION = "/v1";
+
+    public static final String BASE_PATH = "/api" + API_VERSION;
 
     public static final String BASE_AUTH_PATH = BASE_PATH + "/auth";
 
@@ -37,7 +40,7 @@ public class CommonConstants {
 
     public static final String BEGINNING_AUTH_HEADER_NAME = "Bearer ";
 
-    public static final Instant DEFAULT_ACCESS_TOKEN_TTL = Instant.ofEpochSecond(5 * 60 * 1000);
+    public static final Duration DEFAULT_ACCESS_TOKEN_TTL = Duration.ofMinutes(5);
 
-    public static final Instant DEFAULT_REFRESH_TOKEN_TTL = Instant.ofEpochSecond(24 * 60 * 60 * 1000);
+    public static final Duration DEFAULT_REFRESH_TOKEN_TTL = Duration.ofDays(1);
 }

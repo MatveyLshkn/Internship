@@ -12,10 +12,14 @@ import lombok.experimental.UtilityClass;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import static lma.constants.CommonConstants.DEFAULT_ACCESS_TOKEN_TTL;
+import static lma.constants.CommonConstants.DEFAULT_REFRESH_TOKEN_TTL;
 import static lma.constants.CommonConstants.IP_CLAIM_NAME;
 import static lma.constants.CommonConstants.ROLES_CLAIM_NAME;
 import static lma.constants.CommonConstants.SECRET;
@@ -31,12 +35,14 @@ public class JwtUtil {
     }
 
     public static String generateAccessToken(User user, String ip) {
-        LocalDateTime now = LocalDateTime.now();
-        Instant accessExpirationInstant = now.plusMinutes(5).atZone(ZoneId.systemDefault()).toInstant();
-        Date accessExpiration = Date.from(accessExpirationInstant);
+
+        Date accessTokenExpiration = Date.from(
+                Instant.now().plus(DEFAULT_ACCESS_TOKEN_TTL)
+        );
+
         return Jwts.builder()
                 .subject(user.getUsername())
-                .expiration(accessExpiration)
+                .expiration(accessTokenExpiration)
                 .signWith(SignatureAlgorithm.HS256, getKey())
                 .claim(ROLES_CLAIM_NAME, user.getRoles())
                 .claim(IP_CLAIM_NAME, ip)
@@ -44,12 +50,14 @@ public class JwtUtil {
     }
 
     public static String generateRefreshToken(User user, String ip) {
-        LocalDateTime now = LocalDateTime.now();
-        Instant refreshExpirationInstant = now.plusDays(1).atZone(ZoneId.systemDefault()).toInstant();
-        Date refreshExpiration = Date.from(refreshExpirationInstant);
+
+        Date refreshTokenExpiration = Date.from(
+                Instant.now().plus(DEFAULT_REFRESH_TOKEN_TTL)
+        );
+
         return Jwts.builder()
                 .subject(user.getUsername())
-                .expiration(refreshExpiration)
+                .expiration(refreshTokenExpiration)
                 .signWith(SignatureAlgorithm.HS256, getKey())
                 .claim(IP_CLAIM_NAME, ip)
                 .compact();
@@ -62,8 +70,10 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+
             String jwtIp = extractIpAddress(token);
             return jwtIp != null && jwtIp.equals(ip);
+
         } catch (Exception e) {
             return false;
         }

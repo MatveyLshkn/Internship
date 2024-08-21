@@ -1,8 +1,6 @@
 package lma.config;
 
-import lma.constants.CommonConstants;
 import lma.filter.JwtFilter;
-import lma.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +43,8 @@ public class SecurityConfig {
                                         REGISTER_ENDPOINT,
                                         REFRESH_ENDPOINT).permitAll()
                                 .requestMatchers(ADMIN_GREETING_ENDPOINT).hasAuthority(ADMIN_ROLE_NAME)
-                                .requestMatchers(USER_GREETING_ENDPOINT).hasAnyAuthority(USER_ROLE_NAME, ADMIN_ROLE_NAME)
+                                .requestMatchers(USER_GREETING_ENDPOINT).hasAnyAuthority(USER_ROLE_NAME,
+                                        ADMIN_ROLE_NAME)
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
