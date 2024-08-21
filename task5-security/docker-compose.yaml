@@ -16,9 +16,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: -p 8080
+    ports:
+      - "8080:8080"
     depends_on:
       - postgres
-
 
 volumes:
   postgres_data:
