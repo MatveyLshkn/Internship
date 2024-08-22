@@ -23,23 +23,30 @@ repositories {
     mavenCentral()
 }
 
-
+apply from: 'versions.gradle'
 
 dependencies {
-    implementation 'org.flywaydb:flyway-core:10.17.1'
-    runtimeOnly 'org.flywaydb:flyway-database-postgresql:10.17.1'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.openapi}"
 
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+    implementation "org.flywaydb:flyway-core:${versions.flyway}"
+    runtimeOnly "org.flywaydb:flyway-database-postgresql:${versions.flyway}"
+
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${versions.jjwt}"
+    implementation "io.jsonwebtoken:jjwt-api:${versions.jjwt}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${versions.jjwt}"
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
+
+    runtimeOnly 'org.postgresql:postgresql'
+
     runtimeOnly 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

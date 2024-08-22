@@ -2,7 +2,8 @@ CREATE TABLE users
 (
     id       BIGINT DEFAULT nextval('user_id_sequence') PRIMARY KEY,
     username VARCHAR(64) NOT NULL UNIQUE,
-    password VARCHAR(64) NOT NULL
+    password VARCHAR(64) NOT NULL,
+    email VARCHAR(64) NOT NULL UNIQUE
 );
 
 CREATE TABLE role

@@ -26,6 +26,7 @@ public class UserMapper {
         return User.builder()
                 .username(userRegisterDto.username())
                 .password(passwordEncoder.encode(userRegisterDto.password()))
+                .email(userRegisterDto.email())
                 .roles(userRoles)
                 .build();
     }

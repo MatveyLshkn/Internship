@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
 
-    @Modifying
     @Transactional
     void deleteByRefreshToken(String refreshToken);
 

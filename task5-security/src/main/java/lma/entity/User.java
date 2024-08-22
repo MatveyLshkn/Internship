@@ -45,12 +45,15 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 64)
     private String password;
 
+    @Column(nullable = false, length = 64)
+    private String email;
+
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     private List<TokenPair> tokenPairs = new ArrayList<>();
 
     @Builder.Default
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(/*fetch = FetchType.EAGER, */cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "users_roles",
             joinColumns = {@JoinColumn(name = "user_id")},

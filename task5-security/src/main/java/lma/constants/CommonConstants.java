@@ -26,6 +26,10 @@ public class CommonConstants {
 
     public static final String USER_GREETING_ENDPOINT = BASE_GREETING_ENDPOINT + "/user";
 
+    public static final String OPENAPI_PATH = "/v3/api-docs/**";
+
+    public static final String SWAGGER_UI_PATH = "/swagger-ui/**";
+
     public static final String SECRET = "c249d0b92ede74cf785d9bc00d39b9ebf393117c212706af54b5520ab8467a28";
 
     public static final String ROLES_CLAIM_NAME = "roles";

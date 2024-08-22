@@ -27,20 +27,14 @@ public class AuthController {
     public ResponseEntity<JwtResponse> register(@RequestBody UserRegisterDto userRegisterDto,
                                                 HttpServletRequest request) {
 
-        TokenPair registerTokens = authService.register(userRegisterDto, request.getRemoteAddr());
-
-        JwtResponse token = new JwtResponse(registerTokens.getAccessToken(), registerTokens.getRefreshToken());
-
+        JwtResponse token = authService.register(userRegisterDto, request.getRemoteAddr());
         return ResponseEntity.ok(token);
     }
 
     @PostMapping(LOGIN_ENDPOINT)
     public ResponseEntity<JwtResponse> login(@RequestBody UserLoginDto user, HttpServletRequest request) {
 
-        TokenPair loginTokens = authService.login(user, request.getRemoteAddr());
-
-        JwtResponse token = new JwtResponse(loginTokens.getAccessToken(), loginTokens.getRefreshToken());
-
+        JwtResponse token = authService.login(user, request.getRemoteAddr());
         return ResponseEntity.ok(token);
     }
 
@@ -48,10 +42,7 @@ public class AuthController {
     public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenDto refreshToken,
                                                     HttpServletRequest request) {
 
-        TokenPair refreshTokenPair = authService.refresh(refreshToken.refreshToken(), request.getRemoteAddr());
-
-        JwtResponse token = new JwtResponse(refreshTokenPair.getAccessToken(), refreshTokenPair.getRefreshToken());
-
+        JwtResponse token = authService.refresh(refreshToken.refreshToken(), request.getRemoteAddr());
         return ResponseEntity.ok(token);
     }
 }

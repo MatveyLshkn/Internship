@@ -1,9 +1,9 @@
 package lma.service;
 
 
+import lma.dto.JwtResponse;
 import lma.dto.UserLoginDto;
 import lma.dto.UserRegisterDto;
-import lma.entity.Role;
 import lma.entity.TokenPair;
 import lma.entity.User;
 import lma.exception.InvalidTokenException;
@@ -18,16 +18,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static lma.constants.ExceptionConstants.INVALID_TOKEN_EXCEPTION_MESSAGE;
 import static lma.constants.ExceptionConstants.USER_ALREADY_EXISTS_EXCEPTION_MESSAGE;
-import static lma.constants.ExceptionConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE;
+import static lma.constants.ExceptionConstants.USER_NOT_FOUND_BY_USERNAME_EXCEPTION_MESSAGE;
 import static lma.constants.ExceptionConstants.WRONG_PASSWORD_EXCEPTION_MESSAGE;
 import static lma.util.JwtUtil.extractUsername;
 import static lma.util.JwtUtil.generateAccessToken;
-import static lma.util.JwtUtil.generateRefreshToken;
 import static lma.util.JwtUtil.generateTokenPair;
 import static lma.util.JwtUtil.isTokenValid;
 
@@ -47,7 +43,7 @@ public class AuthService {
 
     private final TokenPairRepository tokenPairRepository;
 
-    public TokenPair register(UserRegisterDto userDto, String ip) {
+    public JwtResponse register(UserRegisterDto userDto, String ip) {
 
         User user = userRepository.getByUsername(userDto.username());
         if (user != null) {
@@ -61,14 +57,14 @@ public class AuthService {
         user.addToken(tokenPair);
         userRepository.save(user);
 
-        return tokenPair;
+        return new JwtResponse(tokenPair.getAccessToken(), tokenPair.getRefreshToken());
     }
 
-    public TokenPair login(UserLoginDto userDto, String ip) {
+    public JwtResponse login(UserLoginDto userDto, String ip) {
 
         User user = userRepository.getByUsername(userDto.username());
         if (user == null) {
-            throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(userDto.username()));
+            throw new UserNotFoundException(USER_NOT_FOUND_BY_USERNAME_EXCEPTION_MESSAGE.formatted(userDto.username()));
         }
 
         if (passwordEncoder.matches(userDto.password(), user.getPassword())) {
@@ -76,21 +72,22 @@ public class AuthService {
             TokenPair tokenPair = generateTokenPair(user, ip);
             tokenPair.setUser(user);
 
-            return tokenPairRepository.save(tokenPair);
+            tokenPairRepository.save(tokenPair);
 
+            return new JwtResponse(tokenPair.getAccessToken(), tokenPair.getRefreshToken());
         } else {
             throw new WrongPasswordException(WRONG_PASSWORD_EXCEPTION_MESSAGE);
         }
     }
 
-    public TokenPair refresh(String refreshToken, String ip) {
+    public JwtResponse refresh(String refreshToken, String ip) {
 
         if (isTokenValid(refreshToken, ip)) {
 
             String username = extractUsername(refreshToken);
             User user = userRepository.getByUsername(username);
             if (user == null) {
-                throw new UserNotFoundException(USER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(username));
+                throw new UserNotFoundException(USER_NOT_FOUND_BY_USERNAME_EXCEPTION_MESSAGE.formatted(username));
             }
 
             TokenPair tokenPair = tokenPairRepository.findByRefreshTokenAndUser_Id(refreshToken, user.getId());
@@ -98,7 +95,9 @@ public class AuthService {
                 String accessToken = generateAccessToken(user, ip);
                 tokenPair.setAccessToken(accessToken);
 
-                return tokenPairRepository.save(tokenPair);
+                tokenPairRepository.save(tokenPair);
+
+                return new JwtResponse(tokenPair.getAccessToken(), tokenPair.getRefreshToken());
             } else {
                 throw new InvalidTokenException(INVALID_TOKEN_EXCEPTION_MESSAGE);
             }

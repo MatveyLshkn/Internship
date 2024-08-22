@@ -1,5 +1,6 @@
 package lma.service;
 
+import lma.entity.User;
 import lma.repository.UserRepository;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,12 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.getByUsername(username);
+        User user = userRepository.getByUsername(username);
+        return user;
+    }
+
+    public UserDetails loadUserAndAuthoritiesByUsername(String username) {
+        User user = userRepository.getByUsernameWithRoles(username);
+        return user;
     }
 }
