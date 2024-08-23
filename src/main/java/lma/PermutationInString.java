@@ -2,7 +2,8 @@ package lma;
 
 //https://leetcode.com/problems/permutation-in-string/description/
 public class PermutationInString {
-    public static boolean checkInclusion(String s1, String s2) {
+
+    public boolean checkInclusion(String s1, String s2) {
 
         int map[] = new int[26];
         for (char ch : s1.toCharArray()) {
@@ -19,19 +20,18 @@ public class PermutationInString {
                 remains--;
             }
 
-            map[s2.charAt(right) - 'a']--;
-            right++;
-
             if (remains == 0) {
                 return true;
             }
+
+            map[s2.charAt(right) - 'a']--;
+            right++;
 
             if (right - left == s1.length()) {
 
                 if (map[s2.charAt(left) - 'a'] >= 0) {
                     remains++;
                 }
-
                 map[s2.charAt(left) - 'a']++;
                 left++;
 
