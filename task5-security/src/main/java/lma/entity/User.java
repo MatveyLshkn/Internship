@@ -53,7 +53,7 @@ public class User implements UserDetails {
     private List<TokenPair> tokenPairs = new ArrayList<>();
 
     @Builder.Default
-    @ManyToMany(/*fetch = FetchType.EAGER, */cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "users_roles",
             joinColumns = {@JoinColumn(name = "user_id")},

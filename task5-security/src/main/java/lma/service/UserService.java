@@ -2,12 +2,10 @@ package lma.service;
 
 import lma.entity.User;
 import lma.repository.UserRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +21,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDetails loadUserAndAuthoritiesByUsername(String username) {
-        User user = userRepository.getByUsernameWithRoles(username);
+        User user = userRepository.getByUsernameWithRolesEager(username);
         return user;
     }
 }
