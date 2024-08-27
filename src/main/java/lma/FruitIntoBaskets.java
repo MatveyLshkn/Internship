@@ -1,10 +1,5 @@
 package lma;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 //https://leetcode.com/problems/fruit-into-baskets/description/
 public class FruitIntoBaskets {
 
