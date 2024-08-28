@@ -3,7 +3,8 @@ package lma;
 //https://leetcode.com/problems/search-in-rotated-sorted-array/
 public class SearchInRotatedSortedArray {
     public int search(int[] nums, int target) {
-        int low = 0, high = nums.length - 1;
+        int low = 0;
+        int high = nums.length - 1;
 
         while (low <= high) {
             int mid = (low + high) / 2;
