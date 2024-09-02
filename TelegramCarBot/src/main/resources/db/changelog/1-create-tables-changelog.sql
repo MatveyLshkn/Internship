@@ -34,3 +34,9 @@ CREATE TABLE post
     info     VARCHAR,
     url      VARCHAR NOT NULL UNIQUE
 );
+
+CREATE TABLE model_check
+(
+    model_id BIGINT PRIMARY KEY REFERENCES model(id),
+    last_checked TIMESTAMP NOT NULL
+);

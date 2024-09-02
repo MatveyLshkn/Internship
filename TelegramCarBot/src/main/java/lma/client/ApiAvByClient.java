@@ -1,5 +1,6 @@
 package lma.client;
 
+import feign.Response;
 import lma.dto.BrandReadDto;
 import lma.dto.ModelReadDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -18,4 +19,7 @@ public interface ApiAvByClient {
 
     @GetMapping("/offer-types/cars/catalog/brand-items/{brandId}/models")
     List<ModelReadDto> getModels(@PathVariable Long brandId);
+
+    @GetMapping("/offers/{postId}")
+    Response getPostInfo(@PathVariable Long postId);
 }
