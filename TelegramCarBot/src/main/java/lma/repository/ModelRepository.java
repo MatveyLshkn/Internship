@@ -2,6 +2,8 @@ package lma.repository;
 
 import lma.entity.Model;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,6 +11,10 @@ import java.util.List;
 @Repository
 public interface ModelRepository extends JpaRepository<Model, Integer> {
 
-    List<Model> findAllByBrand_Name(String brandName);
+    List<Model> findAllByBrand_Id(Long brandId);
 
+    Model findById(Long id);
+
+    @Query("SELECT u.models FROM User u WHERE u.id = :subscriberId")
+    List<Model> findAllModelsBySubscriber(@Param("subscriberId") Long subscriberId);
 }

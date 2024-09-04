@@ -13,14 +13,8 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class TelegramBotConfig {
 
     @Bean
-    public CarBot myTelegramBot() {
-        return new CarBot();
-    }
-
-    @Bean
     public BotSession botSession(CarBot bot) throws TelegramApiException {
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         return botsApi.registerBot(bot);
     }
-
 }

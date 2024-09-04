@@ -1,6 +1,7 @@
 package lma.client;
 
 import feign.Response;
+import lma.constants.FeignClientConstants;
 import lma.dto.BrandReadDto;
 import lma.dto.ModelReadDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,16 +11,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
+import static lma.constants.FeignClientConstants.API_AV_BY_BASE_URL;
+import static lma.constants.FeignClientConstants.API_AV_BY_CLIENT_NAME;
+import static lma.constants.FeignClientConstants.API_AV_BY_GET_BRANDS_URL;
+import static lma.constants.FeignClientConstants.API_AV_BY_GET_MODELS_URL;
+import static lma.constants.FeignClientConstants.API_AV_BY_GET_POST_INFO_URL;
+
 @Component
-@FeignClient(value = "avByClient", url = "https://api.av.by/")
+@FeignClient(value = API_AV_BY_CLIENT_NAME, url = API_AV_BY_BASE_URL)
 public interface ApiAvByClient {
 
-    @GetMapping("/offer-types/cars/catalog/brand-items")
+    @GetMapping(API_AV_BY_GET_BRANDS_URL)
     List<BrandReadDto> getBrands();
 
-    @GetMapping("/offer-types/cars/catalog/brand-items/{brandId}/models")
+    @GetMapping(API_AV_BY_GET_MODELS_URL)
     List<ModelReadDto> getModels(@PathVariable Long brandId);
 
-    @GetMapping("/offers/{postId}")
+    @GetMapping(API_AV_BY_GET_POST_INFO_URL)
     Response getPostInfo(@PathVariable Long postId);
 }

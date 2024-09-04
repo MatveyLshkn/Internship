@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 public interface ModelCheckRepository extends JpaRepository<ModelCheck, Integer> {
 
     ModelCheck findByModelId(Long modelId);
-
 }

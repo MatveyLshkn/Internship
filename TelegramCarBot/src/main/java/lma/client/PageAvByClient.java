@@ -1,15 +1,20 @@
 package lma.client;
 
+import lma.constants.FeignClientConstants;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import static lma.constants.FeignClientConstants.PAGE_AV_BY_BASE_URL;
+import static lma.constants.FeignClientConstants.PAGE_AV_BY_CLIENT_NAME;
+import static lma.constants.FeignClientConstants.PAGE_AV_BY_GET_CAR_PAGE_SORTED_ASC_URL;
+
 @Component
-@FeignClient(value = "pageAvByClient", url = "https://cars.av.by/")
+@FeignClient(value = PAGE_AV_BY_CLIENT_NAME, url = PAGE_AV_BY_BASE_URL)
 public interface PageAvByClient {
 
-    @GetMapping("/filter?brands[0][brand]={brandId}&brands[0][model]={modelId}&page={page}&sort=4")
+    @GetMapping(PAGE_AV_BY_GET_CAR_PAGE_SORTED_ASC_URL)
     String getCarPageSortedAsc(
             @PathVariable Long brandId,
             @PathVariable Long modelId,

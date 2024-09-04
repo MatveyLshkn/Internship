@@ -29,7 +29,10 @@ repositories {
 
 dependencies {
 
+    implementation 'org.telegram:telegrambots-abilities:7.9.1'
+    implementation 'org.telegram:telegrambots-client:7.9.1'
     implementation 'org.telegram:telegrambots:6.9.7.1'
+    implementation 'org.telegram.telegrambots:telegrambots-spring-boot-starter:6.9.7.1'
 
     implementation 'org.jsoup:jsoup:1.18.1'
 
