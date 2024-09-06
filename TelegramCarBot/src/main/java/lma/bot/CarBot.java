@@ -1,216 +1,126 @@
 package lma.bot;
 
+import lma.constants.BotConstants;
 import lma.entity.Brand;
 import lma.entity.Model;
 import lma.entity.User;
 import lma.repository.BrandRepository;
 import lma.repository.ModelRepository;
 import lma.repository.UserRepository;
+import lma.responseHandler.BotResponseHandler;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.Constants;
+import org.telegram.telegrambots.abilitybots.api.bot.AbilityBot;
+import org.telegram.telegrambots.abilitybots.api.db.DBContext;
+import org.telegram.telegrambots.abilitybots.api.objects.Ability;
+import org.telegram.telegrambots.abilitybots.api.objects.Locality;
+import org.telegram.telegrambots.abilitybots.api.objects.Privacy;
+import org.telegram.telegrambots.abilitybots.api.toggle.BareboneToggle;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static lma.constants.BotConstants.BOT_TOKEN;
+import static lma.constants.BotConstants.BOT_USERNAME;
+import static lma.constants.BotConstants.COMMAND_FOR_HANDLING_CALLBACK;
+import static lma.constants.BotConstants.CREATOR_ID;
+import static lma.constants.BotConstants.START_COMMAND_DESCRIPTION;
+import static lma.constants.BotConstants.START_COMMAND_NAME;
+import static lma.constants.BotConstants.SUBSCRIBE_COMMAND_NAME;
+import static lma.constants.BotConstants.SUBSCRIPTIONS_COMMAND_NAME;
+import static lma.constants.BotConstants.UNSUBSCRIBE_ALL_COMMAND_DESCRIPTION;
+import static lma.constants.BotConstants.UNSUBSCRIBE_ALL_COMMAND_NAME;
+import static lma.constants.BotConstants.UNSUBSCRIBE_COMMAND_DESCRIPTION;
+import static lma.constants.BotConstants.UNSUBSCRIBE_COMMAND_NAME;
+
 @Component
-@RequiredArgsConstructor
-public class CarBot extends TelegramLongPollingBot {
+public class CarBot extends AbilityBot {
 
-    private final UserRepository userRepository;
+    private final BotResponseHandler botResponseHandler;
 
-    private final BrandRepository brandRepository;
+    public CarBot(TelegramClient telegramClient, BotResponseHandler botResponseHandler) {
+        super(telegramClient, BOT_USERNAME);
+        this.botResponseHandler = botResponseHandler;
+    }
 
-    private final ModelRepository modelRepository;
+    public Ability startBot() {
+        return Ability.builder()
+                .name(START_COMMAND_NAME)
+                .info(START_COMMAND_DESCRIPTION)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
+                .post(ctx -> botResponseHandler.handleStartCommand(ctx.chatId(), ctx.user().getId()))
+                .build();
+    }
+
+    public Ability subscribe() {
+        return Ability.builder()
+                .name(SUBSCRIBE_COMMAND_NAME)
+                .info(START_COMMAND_DESCRIPTION)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
+                .post(cxt -> botResponseHandler.sendInlineKeyboardBrands(cxt.chatId()))
+                .build();
+    }
+
+    public Ability processCallback() {
+        return Ability.builder()
+                .name(COMMAND_FOR_HANDLING_CALLBACK)
+                .post(ctx -> botResponseHandler.handleCallbacks(ctx.update()))
+                .build();
+    }
+
+    public Ability unsubscribe() {
+        return Ability.builder()
+                .name(UNSUBSCRIBE_COMMAND_NAME)
+                .info(UNSUBSCRIBE_COMMAND_DESCRIPTION)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
+                .post(ctx -> botResponseHandler.handleUnsubscribe(ctx.chatId(), ctx.user().getId()))
+                .build();
+    }
+
+    public Ability subscriptions() {
+        return Ability.builder()
+                .name(SUBSCRIPTIONS_COMMAND_NAME)
+                .info(START_COMMAND_DESCRIPTION)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
+                .post(ctx -> botResponseHandler.getSubscriptionList(ctx.chatId(), ctx.user().getId()))
+                .build();
+    }
+
+    public Ability unsubscribeAll() {
+        return Ability.builder()
+                .name(UNSUBSCRIBE_ALL_COMMAND_NAME)
+                .info(UNSUBSCRIBE_ALL_COMMAND_DESCRIPTION)
+                .locality(Locality.USER)
+                .privacy(Privacy.PUBLIC)
+                .post(ctx -> botResponseHandler.unsubscribeAllModels(ctx.chatId(), ctx.user().getId()))
+                .build();
+    }
 
     @Override
-    public void onUpdateReceived(Update update) {
-
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            Long chatId = update.getMessage().getChatId();
-            Long userId = update.getMessage().getFrom().getId();
-
-            if (update.getMessage().equals("/start")) {
-
-
-                User user = userRepository.findById(userId);
-                if (user == null) {
-                    userRepository.save(User.builder()
-                            .id(userId)
-                            .chatId(chatId)
-                            .build());
-                }
-                user.setChatId(chatId);
-
-                sendInlineKeyboardBrands(chatId, "Choose car brand:");
-            } else {
-                sendText(chatId, "Wrong command!");
-            }
-
-        } else if (update.hasCallbackQuery()) {
-            Long userId = update.getCallbackQuery().getFrom().getId();
-            Long chatId = update.getCallbackQuery().getMessage().getChatId();
-
-            User user = userRepository.findById(userId);
-            if (user == null) {
-                userRepository.save(User.builder()
-                        .id(userId)
-                        .chatId(chatId)
-                        .build());
-            }
-            user.setChatId(chatId);
-
-
-            String data = update.getCallbackQuery().getData();
-            if (data.contains("BRAND_")) {
-                sendModelList(chatId, Long.valueOf(data.replace("BRAND_" , "")));
-            } else if (data.contains("MODEL_")) {
-                handleSubscribe(chatId, Long.valueOf(data.replace("MODEL_" , "")));
-            } else if(data.contains("UNSUBSCRIBE_")){
-                handleUnsubscribe(userId, Long.valueOf(data.replace("UNSUBSCRIBE_" , "")));
-                sendText(chatId, "Unsubscribed!");
-            }
-        }
+    public long creatorId() {
+        return CREATOR_ID;
     }
-
-    public void handleUnsubscribe(Long userId, Long modelId) {
-        User user = userRepository.findById(userId);
-        Model model = modelRepository.findById(modelId);
-
-        user.getModels().remove(model);
-    }
-
-
-    public void handleSubscribe(Long userId, Long modelId) {
-        User user = userRepository.findById(userId);
-        Model model = modelRepository.findById(modelId);
-
-        user.getModels().add(model);
-    }
-
-    private void sendInlineKeyboardBrands(Long chatId, String text) {
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(text);
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-
-        List<Brand> brands = brandRepository.findAll();
-        for (Brand brand : brands) {
-            List<InlineKeyboardButton> row = new ArrayList<>();
-            row.add(createInlineKeyboardButton(brand.getName(), "BRAND_" + brand.getId().toString()));
-            rows.add(row);
-        }
-
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-        message.setReplyMarkup(inlineKeyboardMarkup);
-
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void sendSubscriptionList(Long chatId, Long userId) {
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText("Выберите модель: ");
-
-
-        List<Model> models = modelRepository.findAllModelsBySubscriber(userId);
-
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        for (Model model : models) {
-            List<InlineKeyboardButton> row = new ArrayList<>();
-            row.add(createInlineKeyboardButton(model.getName(), "UNSUBSCRIBE_" + model.getId().toString()));
-            rows.add(row);
-        }
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-        message.setReplyMarkup(inlineKeyboardMarkup);
-
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void sendModelList(Long chatId, Long brandId) {
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText("Выберите модель: ");
-
-
-        List<Model> models = modelRepository.findAllByBrand_Id(brandId);
-
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        for (Model model : models) {
-            List<InlineKeyboardButton> row = new ArrayList<>();
-            row.add(createInlineKeyboardButton(model.getName(), "MODEL_" + model.getId().toString()));
-            rows.add(row);
-        }
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-        message.setReplyMarkup(inlineKeyboardMarkup);
-
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void handleModelSelection(Long chatId) {
-        String responseMessage = "Модель выбрана";
-        sendText(chatId, responseMessage);
-    }
-
-
-
-    private InlineKeyboardButton createInlineKeyboardButton(String text, String callbackData) {
-        InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(text);
-        button.setCallbackData(callbackData);
-        return button;
-    }
-
 
     @Override
     public String getBotUsername() {
-        return "CarsAvBy_bot";
+        return BOT_USERNAME;
     }
 
-    @Async
-    public void sendText(Long who, String what) {
-        SendMessage sm = SendMessage.builder()
-                .chatId(who.toString())
-                .text(what).build();
-        try {
-            execute(sm);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public String getBotToken() {
-        return "7359286617:AAH0017cW6sIW7vVA_5wAdiI8_0gS_W_zJc";
+        return BOT_TOKEN;
     }
 }

@@ -17,4 +17,8 @@ public interface ModelRepository extends JpaRepository<Model, Integer> {
 
     @Query("SELECT u.models FROM User u WHERE u.id = :subscriberId")
     List<Model> findAllModelsBySubscriber(@Param("subscriberId") Long subscriberId);
+
+    @Query("SELECT Model.id FROM Model WHERE Model.brand.id = :brandId")
+    List<Long> findAllModelIdsByBrandId(@Param("brandId") Long brandId);
+
 }

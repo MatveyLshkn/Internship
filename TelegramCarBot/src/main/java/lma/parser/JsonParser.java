@@ -11,9 +11,12 @@ import lma.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lma.constants.CommonConstants.DATE_TIME_FORMAT;
 import static lma.constants.CommonConstants.POST_INFO_FORMAT;
 import static lma.constants.JsonConstants.ADVERTS_JSON_NODE_NAME;
 import static lma.constants.JsonConstants.AMOUNT_JSON_NODE_NAME;
@@ -26,6 +29,7 @@ import static lma.constants.JsonConstants.PAGE_COUNT_JSON_NODE_NAME;
 import static lma.constants.JsonConstants.PRICE_JSON_NODE_NAME;
 import static lma.constants.JsonConstants.PROPS_JSON_NODE_NAME;
 import static lma.constants.JsonConstants.PUBLIC_URL_JSON_NODE_NAME;
+import static lma.constants.JsonConstants.PUBLISHED_AT_JSON_NODE_NAME;
 import static lma.constants.JsonConstants.USD_JSON_NODE_NAME;
 
 @Component
@@ -42,21 +46,6 @@ public class JsonParser {
                 .path(FILTER_JSON_NODE_NAME)
                 .path(MAIN_JSON_NODE_NAME)
                 .path(PAGE_COUNT_JSON_NODE_NAME).asLong();
-    }
-
-    public List<String> parseUrls(String json) throws JsonProcessingException {
-        JsonNode rootNode = jsonMapper.readTree(json);
-
-        JsonNode adverts = getAdvertsJsonNode(json);
-
-        List<String> urls = new ArrayList<>();
-
-        for (JsonNode advert : adverts) {
-            JsonNode url = advert.path(PUBLIC_URL_JSON_NODE_NAME);
-            urls.add(url.asText());
-        }
-
-        return urls;
     }
 
     public JsonNode getAdvertsJsonNode(String json) throws JsonProcessingException {
@@ -84,5 +73,11 @@ public class JsonParser {
                 .path(USD_JSON_NODE_NAME)
                 .path(AMOUNT_JSON_NODE_NAME)
                 .asDouble();
+    }
+
+    public ZonedDateTime getZonedDateTimeFromAdvertJsonNode(JsonNode advert){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+        JsonNode publishedAt = advert.path(PUBLISHED_AT_JSON_NODE_NAME);
+        return ZonedDateTime.parse(publishedAt.asText(), dateTimeFormatter);
     }
 }
