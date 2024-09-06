@@ -31,15 +31,11 @@ import static lma.util.JwtUtil.isTokenValid;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserService userService;
-
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
-
-    private final RoleRepository roleRepository;
 
     private final TokenPairRepository tokenPairRepository;
 
