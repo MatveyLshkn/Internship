@@ -11,6 +11,7 @@ import lma.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.abilitybots.api.sender.SilentSender;
 
 import java.util.List;
 
@@ -33,8 +34,9 @@ public class KafkaConsumerService {
 
         List<User> subscribedUsers = userRepository.findAllBySubscribedModelId(modelId);
 
+        SilentSender sender = bot.getSilent();
         for (User user : subscribedUsers) {
-            bot.sendText(user.getChatId(), TELEGRAM_POST_MESSAGE.formatted(post.url(), post.info()));
+            sender.send(TELEGRAM_POST_MESSAGE.formatted(post.url(), post.info()), user.getChatId());
         }
     }
 }

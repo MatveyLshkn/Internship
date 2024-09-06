@@ -29,15 +29,12 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static lma.constants.CommonConstants.CAR_UPDATE_CRON_EXPRESSION;
 import static lma.constants.CommonConstants.CHECK_FOR_NEW_POSTS_RATE;
-import static lma.constants.CommonConstants.DATE_TIME_FORMAT;
 import static lma.constants.CommonConstants.INITIAL_CAR_UPDATE_DELAY;
 import static lma.constants.CommonConstants.OUTDATED_POSTS_CRON_EXPRESSION;
-import static lma.constants.JsonConstants.PUBLISHED_AT_JSON_NODE_NAME;
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +46,9 @@ public class ScheduledService {
 
     private final ModelRepository modelRepository;
 
-    private final ModelCheckRepository modelCheckRepository;
-
     private final PostRepository postRepository;
+
+    private final ModelCheckRepository modelCheckRepository;
 
     private final BrandMapper brandMapper;
 
@@ -71,7 +68,7 @@ public class ScheduledService {
     public void updateCarAndModelList() throws IOException {
         List<BrandReadDto> allBrandsFromSite = apiAvByClient.getBrands();
 
-        List<Long> brandIdsFromDatabase = brandRepository.findAllBrandIds();
+        List<Long> brandIdsFromDatabase = brandRepository.findAllBrandsIds();
 
         for (BrandReadDto brand : allBrandsFromSite) {
             if (!brandIdsFromDatabase.contains(brand.id())) {

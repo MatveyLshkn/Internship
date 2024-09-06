@@ -1,30 +1,12 @@
 package lma.bot;
 
-import lma.constants.BotConstants;
-import lma.entity.Brand;
-import lma.entity.Model;
-import lma.entity.User;
-import lma.repository.BrandRepository;
-import lma.repository.ModelRepository;
-import lma.repository.UserRepository;
+
 import lma.responseHandler.BotResponseHandler;
-import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.Constants;
 import org.telegram.telegrambots.abilitybots.api.bot.AbilityBot;
-import org.telegram.telegrambots.abilitybots.api.db.DBContext;
 import org.telegram.telegrambots.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.abilitybots.api.objects.Locality;
 import org.telegram.telegrambots.abilitybots.api.objects.Privacy;
-import org.telegram.telegrambots.abilitybots.api.toggle.BareboneToggle;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.ArrayList;
@@ -32,7 +14,7 @@ import java.util.List;
 
 import static lma.constants.BotConstants.BOT_TOKEN;
 import static lma.constants.BotConstants.BOT_USERNAME;
-import static lma.constants.BotConstants.COMMAND_FOR_HANDLING_CALLBACK;
+import static lma.constants.BotConstants.CALLBACK_HANDLING_COMMAND;
 import static lma.constants.BotConstants.CREATOR_ID;
 import static lma.constants.BotConstants.START_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.START_COMMAND_NAME;
@@ -75,7 +57,7 @@ public class CarBot extends AbilityBot {
 
     public Ability processCallback() {
         return Ability.builder()
-                .name(COMMAND_FOR_HANDLING_CALLBACK)
+                .name(CALLBACK_HANDLING_COMMAND)
                 .post(ctx -> botResponseHandler.handleCallbacks(ctx.update()))
                 .build();
     }

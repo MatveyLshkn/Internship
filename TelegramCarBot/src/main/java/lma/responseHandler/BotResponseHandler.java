@@ -51,8 +51,8 @@ public class BotResponseHandler {
     }
 
     public SendMessage sendInlineKeyboardBrands(Long chatId) {
-        List<InlineKeyboardRow> rows = new ArrayList<>();
         List<Brand> brands = brandRepository.findAll();
+        List<InlineKeyboardRow> rows = new ArrayList<>();
         for (Brand brand : brands) {
             InlineKeyboardRow row = new InlineKeyboardRow();
             row.add(createInlineKeyboardButton(brand.getName(), BRAND_PREFIX + brand.getId().toString()));
@@ -102,12 +102,15 @@ public class BotResponseHandler {
         return sendSubscriptionList(chatId, userId, false);
     }
 
+    public SendMessage handleUnsubscribe(Long userId, Long modelId) {
+        return sendSubscriptionList(userId, modelId, true);
+    }
+
     private SendMessage sendSubscriptionList(Long chatId, Long userId, boolean forRemoval) {
         String callbackDataPrefix = forRemoval ? UNSUBSCRIBE_MODEL_PREFIX : "";
         List<Model> models = modelRepository.findAllModelsBySubscriber(userId);
 
         return getSendMessageModelList(chatId, models);
-
     }
 
     private SendMessage sendModelListByBrand(Long chatId, Long brandId) {
@@ -147,10 +150,6 @@ public class BotResponseHandler {
                 .chatId(chatId)
                 .text(SUBSCRIPTION_LIST_CLEARED_MESSAGE)
                 .build();
-    }
-
-    public SendMessage handleUnsubscribe(Long userId, Long modelId) {
-        return sendSubscriptionList(userId, modelId, true);
     }
 
     private SendMessage unsubscribeUser(Long chatId, Long userId, Long modelId) {

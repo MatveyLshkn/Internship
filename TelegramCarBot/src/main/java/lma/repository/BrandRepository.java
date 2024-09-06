@@ -11,5 +11,5 @@ import java.util.List;
 public interface BrandRepository extends JpaRepository<Brand, Integer> {
 
     @Query("SELECT Brand.id FROM Brand")
-    List<Long> findAllBrandIds();
+    List<Long> findAllBrandsIds();
 }

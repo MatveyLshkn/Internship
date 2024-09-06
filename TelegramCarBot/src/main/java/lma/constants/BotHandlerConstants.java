@@ -20,6 +20,4 @@ public class BotHandlerConstants {
     public static final String UNSUBSCRIBED_MESSAGE = "Unsubscribed!";
 
     public static final String SUBSCRIBED_MESSAGE = "Subscribed!";
-
-
 }

@@ -25,7 +25,7 @@ public class BotConstants {
 
     public static final String UNSUBSCRIBE_ALL_COMMAND_DESCRIPTION = "Unsubscribe all models posts";
 
-    public static final String COMMAND_FOR_HANDLING_CALLBACK = "";
+    public static final String CALLBACK_HANDLING_COMMAND = "";
 
     public static final Integer CREATOR_ID = 1113556202;
 
