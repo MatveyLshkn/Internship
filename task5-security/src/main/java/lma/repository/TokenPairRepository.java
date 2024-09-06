@@ -1,0 +1,16 @@
+package lma.repository;
+
+import jakarta.transaction.Transactional;
+import lma.entity.TokenPair;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface TokenPairRepository extends JpaRepository<TokenPair, Long> {
+
+    @Transactional
+    void deleteByRefreshToken(String refreshToken);
+
+    TokenPair findByRefreshTokenAndUser_Id(String refreshToken, Long userId);
+}

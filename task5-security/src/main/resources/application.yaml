@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5433/security
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1096071367221-eqi2at56gpkne32ej4mj6m31q92dk789.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google

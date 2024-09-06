@@ -1,0 +1,7 @@
+ext {
+    versions = [
+            openapi:'2.6.0',
+            flyway:'10.17.1',
+            jjwt:'0.12.6'
+    ]
+}
