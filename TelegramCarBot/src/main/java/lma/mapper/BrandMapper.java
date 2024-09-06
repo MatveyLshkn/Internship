@@ -1,17 +1,17 @@
 package lma.mapper;
 
-import lma.dto.BrandReadDto;
+import lma.dto.BrandDto;
 import lma.entity.Brand;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BrandMapper {
 
-    public Brand map(BrandReadDto brandReadDto) {
+    public Brand map(BrandDto brandDto) {
         return Brand.builder()
-                .id(brandReadDto.id())
-                .name(brandReadDto.name())
-                .slug(brandReadDto.slug())
+                .id(brandDto.id())
+                .name(brandDto.name())
+                .slug(brandDto.slug())
                 .build();
     }
 }

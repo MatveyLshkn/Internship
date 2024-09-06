@@ -1,11 +1,8 @@
 package lma.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lma.bot.CarBot;
-import lma.constants.CommonConstants;
-import lma.dto.PostReadDto;
-import lma.entity.Post;
+import lma.dto.PostDto;
 import lma.entity.User;
 import lma.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +20,12 @@ import static lma.constants.CommonConstants.TELEGRAM_POST_MESSAGE;
 @RequiredArgsConstructor
 public class KafkaConsumerService {
 
-    private final UserRepository userRepository;
-
     private final CarBot bot;
 
+    private final UserRepository userRepository;
+
     @KafkaListener(topics = POST_KAFKA_TOPIC_NAME, groupId = KAFKA_POST_GROUP_ID)
-    public void listen(PostReadDto post) throws JsonProcessingException {
+    public void listen(PostDto post) throws JsonProcessingException {
 
         Long modelId = post.modelId();
 

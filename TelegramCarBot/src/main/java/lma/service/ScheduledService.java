@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import feign.Response;
 import lma.client.ApiAvByClient;
 import lma.client.PageAvByClient;
-import lma.dto.BrandReadDto;
-import lma.dto.ModelReadDto;
-import lma.dto.PostReadDto;
+import lma.dto.BrandDto;
+import lma.dto.ModelDto;
+import lma.dto.PostDto;
 import lma.entity.Brand;
 import lma.entity.Model;
 import lma.entity.ModelCheck;
@@ -42,6 +42,8 @@ public class ScheduledService {
 
     private final ApiAvByClient apiAvByClient;
 
+    private final PageAvByClient pageAvByClient;
+
     private final BrandRepository brandRepository;
 
     private final ModelRepository modelRepository;
@@ -50,36 +52,35 @@ public class ScheduledService {
 
     private final ModelCheckRepository modelCheckRepository;
 
+    private final KafkaProducerService kafkaProducerService;
+
     private final BrandMapper brandMapper;
 
     private final ModelMapper modelMapper;
 
-    private final PageAvByClient pageAvByClient;
-
-    private final KafkaProducerService kafkaProducerService;
+    private final PostMapper postMapper;
 
     private final PageParser pageParser;
 
     private final JsonParser jsonParser;
 
-    private final PostMapper postMapper;
 
     @Scheduled(initialDelay = INITIAL_CAR_UPDATE_DELAY, cron = CAR_UPDATE_CRON_EXPRESSION)
     public void updateCarAndModelList() throws IOException {
-        List<BrandReadDto> allBrandsFromSite = apiAvByClient.getBrands();
+        List<BrandDto> allBrandsFromSite = apiAvByClient.getBrands();
 
         List<Long> brandIdsFromDatabase = brandRepository.findAllBrandsIds();
 
-        for (BrandReadDto brand : allBrandsFromSite) {
+        for (BrandDto brand : allBrandsFromSite) {
             if (!brandIdsFromDatabase.contains(brand.id())) {
                 Brand brandEntity = brandMapper.map(brand);
                 brandRepository.save(brandEntity);
             }
 
-            List<ModelReadDto> models = apiAvByClient.getModels(brand.id());
+            List<ModelDto> models = apiAvByClient.getModels(brand.id());
             List<Long> modelIdsFromDatabase = modelRepository.findAllModelIdsByBrandId(brand.id());
 
-            for (ModelReadDto model : models) {
+            for (ModelDto model : models) {
                 if (!modelIdsFromDatabase.contains(model.id())) {
                     Model modelEntity = modelMapper.map(model, brand);
                     modelRepository.save(modelEntity);
@@ -139,11 +140,11 @@ public class ScheduledService {
                         break;
                     } else {
                         Post post = jsonParser.parsePostFromAdvertJsonNode(advert, model);
-                        PostReadDto postReadDto = postMapper.map(post);
+                        PostDto postDto = postMapper.map(post);
 
                         postRepository.save(post);
 
-                        kafkaProducerService.sendMessage(postReadDto);
+                        kafkaProducerService.sendMessage(postDto);
                     }
                 }
                 if (needToStop) {

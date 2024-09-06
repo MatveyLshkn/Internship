@@ -1,9 +1,8 @@
 package lma.client;
 
 import feign.Response;
-import lma.constants.FeignClientConstants;
-import lma.dto.BrandReadDto;
-import lma.dto.ModelReadDto;
+import lma.dto.BrandDto;
+import lma.dto.ModelDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +21,10 @@ import static lma.constants.FeignClientConstants.API_AV_BY_GET_POST_INFO_URL;
 public interface ApiAvByClient {
 
     @GetMapping(API_AV_BY_GET_BRANDS_URL)
-    List<BrandReadDto> getBrands();
+    List<BrandDto> getBrands();
 
     @GetMapping(API_AV_BY_GET_MODELS_URL)
-    List<ModelReadDto> getModels(@PathVariable Long brandId);
+    List<ModelDto> getModels(@PathVariable Long brandId);
 
     @GetMapping(API_AV_BY_GET_POST_INFO_URL)
     Response getPostInfo(@PathVariable Long postId);

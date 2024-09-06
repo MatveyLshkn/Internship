@@ -9,9 +9,6 @@ import org.telegram.telegrambots.abilitybots.api.objects.Locality;
 import org.telegram.telegrambots.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static lma.constants.BotConstants.BOT_TOKEN;
 import static lma.constants.BotConstants.BOT_USERNAME;
 import static lma.constants.BotConstants.CALLBACK_HANDLING_COMMAND;
@@ -51,7 +48,7 @@ public class CarBot extends AbilityBot {
                 .info(START_COMMAND_DESCRIPTION)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(cxt -> botResponseHandler.sendInlineKeyboardBrands(cxt.chatId()))
+                .post(cxt -> botResponseHandler.handleSubscribeCommand(cxt.chatId()))
                 .build();
     }
 
@@ -68,7 +65,7 @@ public class CarBot extends AbilityBot {
                 .info(UNSUBSCRIBE_COMMAND_DESCRIPTION)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(ctx -> botResponseHandler.handleUnsubscribe(ctx.chatId(), ctx.user().getId()))
+                .post(ctx -> botResponseHandler.handleUnsubscribeCommand(ctx.chatId(), ctx.user().getId()))
                 .build();
     }
 
@@ -78,7 +75,7 @@ public class CarBot extends AbilityBot {
                 .info(START_COMMAND_DESCRIPTION)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(ctx -> botResponseHandler.getSubscriptionList(ctx.chatId(), ctx.user().getId()))
+                .post(ctx -> botResponseHandler.handleSubscriptionsCommand(ctx.chatId(), ctx.user().getId()))
                 .build();
     }
 
@@ -88,7 +85,7 @@ public class CarBot extends AbilityBot {
                 .info(UNSUBSCRIBE_ALL_COMMAND_DESCRIPTION)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(ctx -> botResponseHandler.unsubscribeAllModels(ctx.chatId(), ctx.user().getId()))
+                .post(ctx -> botResponseHandler.handleUnsubscribeAllCommand(ctx.chatId(), ctx.user().getId()))
                 .build();
     }
 

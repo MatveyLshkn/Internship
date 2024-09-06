@@ -1,8 +1,6 @@
 package lma.config;
 
-import lma.constants.CommonConstants;
-import lma.dto.PostReadDto;
-import lma.entity.Post;
+import lma.dto.PostDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,17 +27,17 @@ public class KafkaConsumerConfig {
     private String bootstrapServers;
 
     @Bean
-    public ConsumerFactory<String, PostReadDto> consumerFactory() {
+    public ConsumerFactory<String, PostDto> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, KAFKA_POST_GROUP_ID);
-        return new DefaultKafkaConsumerFactory<>(props,  new StringDeserializer(), new JsonDeserializer<PostReadDto>());
+        return new DefaultKafkaConsumerFactory<>(props,  new StringDeserializer(), new JsonDeserializer<PostDto>());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PostReadDto> kafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, PostDto> kafkaListenerContainerFactory() {
 
-        ConcurrentKafkaListenerContainerFactory<String, PostReadDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, PostDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

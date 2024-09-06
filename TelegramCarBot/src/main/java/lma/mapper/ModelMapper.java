@@ -1,8 +1,7 @@
 package lma.mapper;
 
-import lma.dto.BrandReadDto;
-import lma.dto.ModelReadDto;
-import lma.entity.Brand;
+import lma.dto.BrandDto;
+import lma.dto.ModelDto;
 import lma.entity.Model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,11 +12,11 @@ public class ModelMapper {
 
     private final BrandMapper brandMapper;
 
-    public Model map(ModelReadDto modelReadDto, BrandReadDto brandReadDto) {
+    public Model map(ModelDto modelDto, BrandDto brandDto) {
         return Model.builder()
-                .brand(brandMapper.map(brandReadDto))
-                .name(modelReadDto.name())
-                .slug(modelReadDto.slug())
+                .brand(brandMapper.map(brandDto))
+                .name(modelDto.name())
+                .slug(modelDto.slug())
                 .build();
     }
 

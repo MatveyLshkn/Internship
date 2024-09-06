@@ -3,9 +3,6 @@ package lma.parser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lma.constants.CommonConstants;
-import lma.constants.JsonConstants;
-import lma.dto.PostReadDto;
 import lma.entity.Model;
 import lma.entity.Post;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 import static lma.constants.CommonConstants.DATE_TIME_FORMAT;
 import static lma.constants.CommonConstants.POST_INFO_FORMAT;
