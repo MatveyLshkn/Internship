@@ -14,6 +14,7 @@ public class ModelMapper {
 
     public Model map(ModelDto modelDto, BrandDto brandDto) {
         return Model.builder()
+                .id(modelDto.id())
                 .brand(brandMapper.map(brandDto))
                 .name(modelDto.name())
                 .slug(modelDto.slug())

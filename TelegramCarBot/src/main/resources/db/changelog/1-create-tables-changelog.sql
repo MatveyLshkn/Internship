@@ -29,7 +29,7 @@ CREATE TABLE preference
 
 CREATE TABLE post
 (
-    post_id  BIGINT PRIMARY KEY,
+    id  BIGINT PRIMARY KEY,
     model_id BIGINT  NOT NULL REFERENCES model (id),
     info     VARCHAR,
     url      VARCHAR NOT NULL UNIQUE
@@ -38,5 +38,5 @@ CREATE TABLE post
 CREATE TABLE model_check
 (
     model_id BIGINT PRIMARY KEY REFERENCES model(id),
-    last_checked TIMESTAMP NOT NULL
+    check_date TIMESTAMP NOT NULL
 );

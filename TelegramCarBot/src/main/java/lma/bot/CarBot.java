@@ -1,13 +1,19 @@
 package lma.bot;
 
-
+import jakarta.annotation.PostConstruct;
 import lma.responseHandler.BotResponseHandler;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.abilitybots.api.bot.AbilityBot;
 import org.telegram.telegrambots.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.abilitybots.api.objects.Locality;
+import org.telegram.telegrambots.abilitybots.api.objects.MessageContext;
 import org.telegram.telegrambots.abilitybots.api.objects.Privacy;
+import org.telegram.telegrambots.abilitybots.api.sender.SilentSender;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.util.List;
 
 import static lma.constants.BotConstants.BOT_TOKEN;
 import static lma.constants.BotConstants.BOT_USERNAME;
@@ -15,7 +21,9 @@ import static lma.constants.BotConstants.CALLBACK_HANDLING_COMMAND;
 import static lma.constants.BotConstants.CREATOR_ID;
 import static lma.constants.BotConstants.START_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.START_COMMAND_NAME;
+import static lma.constants.BotConstants.SUBSCRIBE_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.SUBSCRIBE_COMMAND_NAME;
+import static lma.constants.BotConstants.SUBSCRIPTIONS_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.SUBSCRIPTIONS_COMMAND_NAME;
 import static lma.constants.BotConstants.UNSUBSCRIBE_ALL_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.UNSUBSCRIBE_ALL_COMMAND_NAME;
@@ -32,30 +40,35 @@ public class CarBot extends AbilityBot {
         this.botResponseHandler = botResponseHandler;
     }
 
+    public void sendMessage(SendMessage sendMessage) {
+        silent.execute(sendMessage);
+    }
+
     public Ability startBot() {
         return Ability.builder()
                 .name(START_COMMAND_NAME)
                 .info(START_COMMAND_DESCRIPTION)
+                .input(0)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(ctx -> botResponseHandler.handleStartCommand(ctx.chatId(), ctx.user().getId()))
+                .action(ctx -> sendMessage(
+                                botResponseHandler.handleStartCommand(ctx.chatId(), ctx.user().getId())
+                        )
+                )
                 .build();
     }
 
     public Ability subscribe() {
         return Ability.builder()
                 .name(SUBSCRIBE_COMMAND_NAME)
-                .info(START_COMMAND_DESCRIPTION)
+                .info(SUBSCRIBE_COMMAND_DESCRIPTION)
+                .input(0)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(cxt -> botResponseHandler.handleSubscribeCommand(cxt.chatId()))
-                .build();
-    }
-
-    public Ability processCallback() {
-        return Ability.builder()
-                .name(CALLBACK_HANDLING_COMMAND)
-                .post(ctx -> botResponseHandler.handleCallbacks(ctx.update()))
+                .action(ctx -> sendMessage(
+                                botResponseHandler.handleSubscribeCommand(ctx.chatId(), ctx.user().getId())
+                        )
+                )
                 .build();
     }
 
@@ -63,19 +76,27 @@ public class CarBot extends AbilityBot {
         return Ability.builder()
                 .name(UNSUBSCRIBE_COMMAND_NAME)
                 .info(UNSUBSCRIBE_COMMAND_DESCRIPTION)
+                .input(0)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(ctx -> botResponseHandler.handleUnsubscribeCommand(ctx.chatId(), ctx.user().getId()))
+                .action(ctx -> sendMessage(
+                                botResponseHandler.handleUnsubscribeCommand(ctx.chatId(), ctx.user().getId())
+                        )
+                )
                 .build();
     }
 
     public Ability subscriptions() {
         return Ability.builder()
                 .name(SUBSCRIPTIONS_COMMAND_NAME)
-                .info(START_COMMAND_DESCRIPTION)
+                .info(SUBSCRIPTIONS_COMMAND_DESCRIPTION)
+                .input(0)
                 .locality(Locality.USER)
                 .privacy(Privacy.PUBLIC)
-                .post(ctx -> botResponseHandler.handleSubscriptionsCommand(ctx.chatId(), ctx.user().getId()))
+                .action(ctx -> sendMessage(
+                                botResponseHandler.handleSubscriptionsCommand(ctx.chatId(), ctx.user().getId())
+                        )
+                )
                 .build();
     }
 
@@ -83,9 +104,13 @@ public class CarBot extends AbilityBot {
         return Ability.builder()
                 .name(UNSUBSCRIBE_ALL_COMMAND_NAME)
                 .info(UNSUBSCRIBE_ALL_COMMAND_DESCRIPTION)
-                .locality(Locality.USER)
+                .input(0)
+                .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
-                .post(ctx -> botResponseHandler.handleUnsubscribeAllCommand(ctx.chatId(), ctx.user().getId()))
+                .action(ctx -> sendMessage(
+                                botResponseHandler.handleUnsubscribeAllCommand(ctx.chatId(), ctx.user().getId())
+                        )
+                )
                 .build();
     }
 
@@ -101,5 +126,20 @@ public class CarBot extends AbilityBot {
 
     public String getBotToken() {
         return BOT_TOKEN;
+    }
+
+    @Override
+    public void consume(Update update) {
+        if (update.hasCallbackQuery()) {
+            sendMessage(botResponseHandler.handleCallbacks(update));
+        } else {
+            super.consume(update);
+        }
+    }
+
+    @Override
+    @PostConstruct
+    public void onRegister() {
+        super.onRegister();
     }
 }

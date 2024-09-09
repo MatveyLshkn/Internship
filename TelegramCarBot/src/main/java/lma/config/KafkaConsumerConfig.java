@@ -17,10 +17,11 @@ import java.util.Map;
 
 import static lma.constants.CommonConstants.KAFKA_BOOTSTRAP_SERVERS_CONFIG_NAME;
 import static lma.constants.CommonConstants.KAFKA_POST_GROUP_ID;
+import static lma.constants.CommonConstants.KAFKA_TRUSTED_PACKAGES;
 
 
-@Configuration
 @EnableKafka
+@Configuration
 public class KafkaConsumerConfig {
 
     @Value(KAFKA_BOOTSTRAP_SERVERS_CONFIG_NAME)
@@ -28,17 +29,27 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, PostDto> consumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, KAFKA_POST_GROUP_ID);
-        return new DefaultKafkaConsumerFactory<>(props,  new StringDeserializer(), new JsonDeserializer<PostDto>());
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configs.put(ConsumerConfig.GROUP_ID_CONFIG, KAFKA_POST_GROUP_ID);
+        configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        configs.put(JsonDeserializer.TRUSTED_PACKAGES, KAFKA_TRUSTED_PACKAGES);
+        configs.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        configs.put(JsonDeserializer.VALUE_DEFAULT_TYPE, PostDto.class.getName());
+
+        return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(),
+                new JsonDeserializer<>(PostDto.class)
+        );
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PostDto> kafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, PostDto> kafkaListenerContainerFactory(
+            ConsumerFactory<String, PostDto> consumerFactory) {
 
         ConcurrentKafkaListenerContainerFactory<String, PostDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+
+        factory.setConsumerFactory(consumerFactory);
         return factory;
     }
 }

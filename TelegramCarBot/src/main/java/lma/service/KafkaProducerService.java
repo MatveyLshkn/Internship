@@ -13,7 +13,7 @@ public class KafkaProducerService {
 
     private final KafkaTemplate<String, PostDto> kafkaTemplate;
 
-    public void sendMessage(PostDto post) {
-        kafkaTemplate.send(POST_KAFKA_TOPIC_NAME, post);
+    public void sendMessage(PostDto post, String topic) {
+        kafkaTemplate.send(topic, post);
     }
 }

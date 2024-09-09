@@ -2,6 +2,7 @@ package lma.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import feign.Response;
+import jakarta.annotation.PostConstruct;
 import lma.client.ApiAvByClient;
 import lma.client.PageAvByClient;
 import lma.dto.BrandDto;
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -35,6 +38,7 @@ import static lma.constants.CommonConstants.CAR_UPDATE_CRON_EXPRESSION;
 import static lma.constants.CommonConstants.CHECK_FOR_NEW_POSTS_RATE;
 import static lma.constants.CommonConstants.INITIAL_CAR_UPDATE_DELAY;
 import static lma.constants.CommonConstants.OUTDATED_POSTS_CRON_EXPRESSION;
+import static lma.constants.CommonConstants.POST_KAFKA_TOPIC_NAME;
 
 @Service
 @RequiredArgsConstructor
@@ -65,7 +69,7 @@ public class ScheduledService {
     private final JsonParser jsonParser;
 
 
-    @Scheduled(initialDelay = INITIAL_CAR_UPDATE_DELAY, cron = CAR_UPDATE_CRON_EXPRESSION)
+    @Scheduled(cron = CAR_UPDATE_CRON_EXPRESSION)
     public void updateCarAndModelList() throws IOException {
         List<BrandDto> allBrandsFromSite = apiAvByClient.getBrands();
 
@@ -89,37 +93,39 @@ public class ScheduledService {
         }
     }
 
+
     @Scheduled(cron = OUTDATED_POSTS_CRON_EXPRESSION)
     public void removeOutdatedPosts() {
         List<Post> allPosts = postRepository.findAll();
+        allPosts.forEach(this::checkPost);
+    }
 
-        for (Post post : allPosts) {
-            Response postInfo = apiAvByClient.getPostInfo(post.getId());
-            int status = postInfo.status();
 
-            if (HttpStatus.resolve(status).is4xxClientError()) {
-                postRepository.delete(post);
-            }
+    private void checkPost(Post post) {
+        Response postInfo = apiAvByClient.getPostInfo(post.getId());
+        int status = postInfo.status();
+
+        if (HttpStatus.resolve(status).is4xxClientError()) {
+            postRepository.delete(post);
         }
     }
 
 
     @Scheduled(fixedRate = CHECK_FOR_NEW_POSTS_RATE)
     public void checkForNewPosts() throws IOException {
-        List<Model> models = modelRepository.findAll();
+        List<Model> models = modelRepository.findAllSubscribed();
 
         for (Model model : models) {
-
             Long modelId = model.getId();
             Long brandId = model.getBrand().getId();
 
             ModelCheck modelCheck = modelCheckRepository.findByModelId(modelId);
-            ZonedDateTime lastCheck;
+            LocalDateTime lastCheck;
 
             if (modelCheck != null) {
-                lastCheck = ZonedDateTime.from(modelCheck.getCheckDate().toLocalDateTime());
+                lastCheck = modelCheck.getCheckDate().toLocalDateTime();
             } else {
-                lastCheck = ZonedDateTime.from(LocalDateTime.MIN);
+                lastCheck = LocalDateTime.MIN;
             }
 
             boolean needToStop = false;
@@ -133,9 +139,9 @@ public class ScheduledService {
 
                 for (JsonNode advert : adverts) {
 
-                    ZonedDateTime zonedDateTime = jsonParser.getZonedDateTimeFromAdvertJsonNode(advert);
+                    LocalDateTime postDate = jsonParser.getZonedDateTimeFromAdvertJsonNode(advert);
 
-                    if (zonedDateTime.isBefore(lastCheck)) {
+                    if (postDate.isBefore(lastCheck)) {
                         needToStop = true;
                         break;
                     } else {
@@ -144,7 +150,7 @@ public class ScheduledService {
 
                         postRepository.save(post);
 
-                        kafkaProducerService.sendMessage(postDto);
+                        kafkaProducerService.sendMessage(postDto, POST_KAFKA_TOPIC_NAME);
                     }
                 }
                 if (needToStop) {
@@ -161,5 +167,11 @@ public class ScheduledService {
                         .build());
             }
         }
+    }
+
+
+    @PostConstruct
+    public void initCarBrandsAndModels() throws IOException {
+        updateCarAndModelList();
     }
 }

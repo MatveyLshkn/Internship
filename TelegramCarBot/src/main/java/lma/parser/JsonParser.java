@@ -8,6 +8,7 @@ import lma.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -70,9 +71,9 @@ public class JsonParser {
                 .asDouble();
     }
 
-    public ZonedDateTime getZonedDateTimeFromAdvertJsonNode(JsonNode advert){
+    public LocalDateTime getZonedDateTimeFromAdvertJsonNode(JsonNode advert){
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
         JsonNode publishedAt = advert.path(PUBLISHED_AT_JSON_NODE_NAME);
-        return ZonedDateTime.parse(publishedAt.asText(), dateTimeFormatter);
+        return LocalDateTime.parse(publishedAt.asText(), dateTimeFormatter);
     }
 }

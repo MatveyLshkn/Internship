@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.models WHERE u.id = :userId")
+    public User findByIdWithModelsInitialized(@Param("userId") Long userId);
+
     public User findById(Long id);
 
     @Query("SELECT u FROM User u JOIN u.models m WHERE m.id = :modelId")

@@ -3,6 +3,8 @@ package lma.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,5 +25,6 @@ public class ModelCheck {
     private Long modelId;
 
     @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Timestamp checkDate;
 }

@@ -6,9 +6,13 @@ import lma.dto.PostDto;
 import lma.entity.User;
 import lma.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.abilitybots.api.sender.SilentSender;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.List;
 
@@ -31,9 +35,13 @@ public class KafkaConsumerService {
 
         List<User> subscribedUsers = userRepository.findAllBySubscribedModelId(modelId);
 
-        SilentSender sender = bot.getSilent();
         for (User user : subscribedUsers) {
-            sender.send(TELEGRAM_POST_MESSAGE.formatted(post.url(), post.info()), user.getChatId());
+            bot.sendMessage(
+                    SendMessage.builder()
+                            .chatId(user.getChatId())
+                            .text(TELEGRAM_POST_MESSAGE.formatted(post.url(), post.info()))
+                            .build()
+            );
         }
     }
 }

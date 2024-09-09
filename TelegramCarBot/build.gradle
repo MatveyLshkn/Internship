@@ -29,7 +29,16 @@ repositories {
 
 dependencies {
 
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
     implementation 'org.telegram:telegrambots-abilities:7.9.1'
+    /*implementation 'org.telegram:telegrambots-springboot-longpolling-starter:7.9.1'
+    implementation 'org.telegram:telegrambots-longpolling:7.9.1'
+    implementation 'org.telegram:telegrambots-extensions:7.9.1'
+    implementation 'org.telegram:Bots:7.9.1'*/
+
     implementation 'org.telegram:telegrambots-client:7.9.1'
 
     implementation 'org.jsoup:jsoup:1.18.1'
@@ -40,8 +49,7 @@ dependencies {
 
     implementation 'org.springframework.kafka:spring-kafka'
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+
 
     implementation 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'

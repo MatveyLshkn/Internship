@@ -1,5 +1,6 @@
 package lma.config;
 
+import lma.constants.JsonConstants;
 import lma.dto.PostDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -26,11 +27,14 @@ public class KafkaProducerConfig {
     public ProducerFactory<String, PostDto> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
         return new DefaultKafkaProducerFactory<>(configProps, new StringSerializer(), new JsonSerializer<PostDto>());
     }
 
     @Bean
-    public KafkaTemplate<String, PostDto> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, PostDto> kafkaTemplate(ProducerFactory<String, PostDto> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
     }
 }
