@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.abilitybots.api.sender.SilentSender;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -28,8 +29,9 @@ public class KafkaConsumerService {
 
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     @KafkaListener(topics = POST_KAFKA_TOPIC_NAME, groupId = KAFKA_POST_GROUP_ID)
-    public void listen(PostDto post) throws JsonProcessingException {
+    public void listen(PostDto post) throws JsonProcessingException, InterruptedException {
 
         Long modelId = post.modelId();
 
@@ -42,6 +44,7 @@ public class KafkaConsumerService {
                             .text(TELEGRAM_POST_MESSAGE.formatted(post.url(), post.info()))
                             .build()
             );
+            Thread.sleep(1000);
         }
     }
 }

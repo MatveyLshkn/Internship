@@ -1,7 +1,9 @@
 package lma.bot;
 
 import jakarta.annotation.PostConstruct;
+import lma.constants.BotHandlerConstants;
 import lma.responseHandler.BotResponseHandler;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.abilitybots.api.bot.AbilityBot;
 import org.telegram.telegrambots.abilitybots.api.objects.Ability;
@@ -29,6 +31,7 @@ import static lma.constants.BotConstants.UNSUBSCRIBE_ALL_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.UNSUBSCRIBE_ALL_COMMAND_NAME;
 import static lma.constants.BotConstants.UNSUBSCRIBE_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.UNSUBSCRIBE_COMMAND_NAME;
+import static lma.constants.BotHandlerConstants.CHAT_ID_FOR_EMPTY_MESSAGE;
 
 @Component
 public class CarBot extends AbilityBot {
@@ -40,8 +43,11 @@ public class CarBot extends AbilityBot {
         this.botResponseHandler = botResponseHandler;
     }
 
+    @Async
     public void sendMessage(SendMessage sendMessage) {
-        silent.execute(sendMessage);
+        if (!sendMessage.getChatId().equals(CHAT_ID_FOR_EMPTY_MESSAGE)) {
+            silent.execute(sendMessage);
+        }
     }
 
     public Ability startBot() {
@@ -129,9 +135,14 @@ public class CarBot extends AbilityBot {
     }
 
     @Override
+    @Async("threadPollTaskExecutor")
     public void consume(Update update) {
         if (update.hasCallbackQuery()) {
-            sendMessage(botResponseHandler.handleCallbacks(update));
+            try {
+                sendMessage(botResponseHandler.handleCallbacks(update, silent));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             super.consume(update);
         }

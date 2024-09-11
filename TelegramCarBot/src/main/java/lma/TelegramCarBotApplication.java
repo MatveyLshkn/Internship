@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import static lma.constants.BotConstants.BOT_TOKEN;
 
-@EnableAsync
+
 @EnableScheduling
 @EnableFeignClients
 @SpringBootApplication

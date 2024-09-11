@@ -23,6 +23,7 @@ import lma.repository.ModelRepository;
 import lma.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,7 @@ public class ScheduledService {
     private final JsonParser jsonParser;
 
 
+    @Async("threadPollTaskExecutor")
     @Scheduled(cron = CAR_UPDATE_CRON_EXPRESSION)
     public void updateCarAndModelList() throws IOException {
         List<BrandDto> allBrandsFromSite = apiAvByClient.getBrands();
@@ -94,6 +96,7 @@ public class ScheduledService {
     }
 
 
+    @Async("threadPollTaskExecutor")
     @Scheduled(cron = OUTDATED_POSTS_CRON_EXPRESSION)
     public void removeOutdatedPosts() {
         List<Post> allPosts = postRepository.findAll();
@@ -111,6 +114,7 @@ public class ScheduledService {
     }
 
 
+    @Async("threadPollTaskExecutor")
     @Scheduled(fixedRate = CHECK_FOR_NEW_POSTS_RATE)
     public void checkForNewPosts() throws IOException {
         List<Model> models = modelRepository.findAllSubscribed();
