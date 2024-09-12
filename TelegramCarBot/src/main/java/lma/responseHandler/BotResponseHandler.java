@@ -26,7 +26,6 @@ import static lma.constants.BotHandlerConstants.CHAT_ID_FOR_EMPTY_MESSAGE;
 import static lma.constants.BotHandlerConstants.CHOOSE_BRAND_MESSAGE;
 import static lma.constants.BotHandlerConstants.CHOOSE_MODEL_MESSAGE;
 import static lma.constants.BotHandlerConstants.MODEL_PREFIX;
-import static lma.constants.BotHandlerConstants.NO_BUTTON_TEXT;
 import static lma.constants.BotHandlerConstants.POSTS_COUNT_MESSAGE_FORMAT;
 import static lma.constants.BotHandlerConstants.POSTS_PREFIX;
 import static lma.constants.BotHandlerConstants.START_MESSAGE;
@@ -95,6 +94,8 @@ public class BotResponseHandler {
 
             Long chatId = callbackQuery.getMessage().getChatId();
             Long userId = callbackQuery.getFrom().getId();
+
+            userService.saveUserOrUpdateChatId(chatId, userId);
 
             if (callbackQueryData.contains(BRAND_PREFIX)) {
                 return getModelListByBrandIdInSendMessage(chatId,
@@ -170,14 +171,8 @@ public class BotResponseHandler {
                 POSTS_PREFIX + modelId
         );
 
-        InlineKeyboardButton noKeyboardButton = createInlineKeyboardButton(
-                NO_BUTTON_TEXT,
-                String.valueOf(modelId)
-        );
-
         InlineKeyboardRow inlineKeyboardRow = new InlineKeyboardRow();
         inlineKeyboardRow.add(yesKeyboardButton);
-        inlineKeyboardRow.add(noKeyboardButton);
 
         Long postsCount = postService.countPostsByModelId(modelId);
 

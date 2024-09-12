@@ -45,4 +45,6 @@ public class CommonConstants {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     public static final String BRAND_MODEL_FORMAT = "%s %s";
+
+    public static final String THREAD_POLL_TASK_EXECUTOR_NAME = "threadPollTaskExecutor";
 }

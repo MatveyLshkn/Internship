@@ -45,4 +45,18 @@ public class PostService {
     public Long countPostsByModelId(Long id) {
         return postRepository.countPostByModel_Id(id);
     }
+
+    public List<Post> findAll(){
+        return postRepository.findAll();
+    }
+
+    @Transactional
+    public void delete(Post post) {
+        postRepository.delete(post);
+    }
+
+    @Transactional
+    public Post save(Post post) {
+        return postRepository.save(post);
+    }
 }

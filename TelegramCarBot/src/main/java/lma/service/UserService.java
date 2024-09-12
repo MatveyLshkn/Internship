@@ -26,6 +26,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public void saveUserOrUpdateChatId(Long chatId, Long userId) {
         User user = findById(userId);
         if (user == null) {

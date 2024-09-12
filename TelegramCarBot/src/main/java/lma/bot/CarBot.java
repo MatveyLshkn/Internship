@@ -32,6 +32,7 @@ import static lma.constants.BotConstants.UNSUBSCRIBE_ALL_COMMAND_NAME;
 import static lma.constants.BotConstants.UNSUBSCRIBE_COMMAND_DESCRIPTION;
 import static lma.constants.BotConstants.UNSUBSCRIBE_COMMAND_NAME;
 import static lma.constants.BotHandlerConstants.CHAT_ID_FOR_EMPTY_MESSAGE;
+import static lma.constants.CommonConstants.THREAD_POLL_TASK_EXECUTOR_NAME;
 
 @Component
 public class CarBot extends AbilityBot {
@@ -43,7 +44,7 @@ public class CarBot extends AbilityBot {
         this.botResponseHandler = botResponseHandler;
     }
 
-    @Async
+    @Async(THREAD_POLL_TASK_EXECUTOR_NAME)
     public void sendMessage(SendMessage sendMessage) {
         if (!sendMessage.getChatId().equals(CHAT_ID_FOR_EMPTY_MESSAGE)) {
             silent.execute(sendMessage);
@@ -135,7 +136,7 @@ public class CarBot extends AbilityBot {
     }
 
     @Override
-    @Async("threadPollTaskExecutor")
+    @Async(THREAD_POLL_TASK_EXECUTOR_NAME)
     public void consume(Update update) {
         if (update.hasCallbackQuery()) {
             try {

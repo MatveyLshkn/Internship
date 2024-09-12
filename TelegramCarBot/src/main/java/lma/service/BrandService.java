@@ -18,4 +18,14 @@ public class BrandService {
     public List<Brand> findAll(){
         return brandRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public List<Long> findAllBrandsIds(){
+        return brandRepository.findAllBrandsIds();
+    }
+
+    @Transactional
+    public Brand save(Brand brand){
+        return brandRepository.save(brand);
+    }
 }

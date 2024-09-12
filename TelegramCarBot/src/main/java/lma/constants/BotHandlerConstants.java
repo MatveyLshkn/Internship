@@ -15,8 +15,6 @@ public class BotHandlerConstants {
 
     public static final String YES_BUTTON_TEXT = "Yes";
 
-    public static final String NO_BUTTON_TEXT = "No";
-
     public static final String POSTS_COUNT_MESSAGE_FORMAT = "\nThere are %d posts\n Do you wan\'t to watch them all?";
 
     public static final String UNSUBSCRIBE_MODEL_PREFIX = "UNSUBSCRIBE_";

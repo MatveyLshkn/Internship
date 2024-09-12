@@ -26,4 +26,17 @@ public class ModelService {
     public List<Model> findAllByBrandId(Long id){
         return modelRepository.findAllByBrand_Id(id);
     }
+
+    public List<Long> findAllModelsIdsByBrandId(Long id){
+        return modelRepository.findAllModelIdsByBrandId(id);
+    }
+
+    @Transactional
+    public Model save(Model model){
+        return modelRepository.save(model);
+    }
+
+    public List<Model> findAllSubscribedModels(){
+        return modelRepository.findAllSubscribedModels();
+    }
 }

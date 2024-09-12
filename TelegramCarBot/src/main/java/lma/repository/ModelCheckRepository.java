@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface ModelCheckRepository extends JpaRepository<ModelCheck, Integer> {
 
-    @Lock(LockModeType.PESSIMISTIC_READ)
     ModelCheck findByModelId(Long modelId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
