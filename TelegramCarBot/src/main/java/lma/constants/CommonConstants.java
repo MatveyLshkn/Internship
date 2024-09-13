@@ -17,7 +17,7 @@ public class CommonConstants {
 
     public static final String KAFKA_BOOTSTRAP_SERVERS_CONFIG_NAME = "${spring.kafka.bootstrap-servers}";
 
-    public static final String TELEGRAM_POST_MESSAGE = """
+    public static final String TELEGRAM_POST_MESSAGE_FORMAT = """
             URL: %s
             
             Info: 
@@ -47,4 +47,6 @@ public class CommonConstants {
     public static final String BRAND_MODEL_FORMAT = "%s %s";
 
     public static final String THREAD_POLL_TASK_EXECUTOR_NAME = "threadPollTaskExecutor";
+
+    public static final String TELEGRAM_BOT_EXCEPTION_MESSAGE = "Error in telegram bot!";
 }

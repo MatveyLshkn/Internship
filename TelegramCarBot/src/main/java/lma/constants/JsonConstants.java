@@ -15,6 +15,8 @@ public class JsonConstants {
 
     public static final String PAGE_COUNT_JSON_NODE_NAME = "pageCount";
 
+    public static final String POST_COUNT_JSON_NODE_NAME = "initCount";
+
     public static final String ADVERTS_JSON_NODE_NAME = "adverts";
 
     public static final String PUBLIC_URL_JSON_NODE_NAME = "publicUrl";

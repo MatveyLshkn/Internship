@@ -21,7 +21,6 @@ public class TelegramBotConfig {
 
     @Bean
     public CarBot carBot(TelegramClient telegramClient, BotResponseHandler botResponseHandler) {
-
         return new CarBot(telegramClient, botResponseHandler);
     }
 

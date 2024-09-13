@@ -10,16 +10,19 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BrandService {
 
     private final BrandRepository brandRepository;
 
-    @Transactional(readOnly = true)
+    public Brand findById(Long id){
+        return brandRepository.findById(id);
+    }
+
     public List<Brand> findAll(){
         return brandRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     public List<Long> findAllBrandsIds(){
         return brandRepository.findAllBrandsIds();
     }

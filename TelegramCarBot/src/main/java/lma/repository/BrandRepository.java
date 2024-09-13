@@ -20,4 +20,5 @@ public interface BrandRepository extends JpaRepository<Brand, Integer> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Brand save(Brand brand);
 
+    Brand findById(Long id);
 }
