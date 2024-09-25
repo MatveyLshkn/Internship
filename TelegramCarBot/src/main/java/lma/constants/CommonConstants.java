@@ -49,4 +49,6 @@ public class CommonConstants {
     public static final String THREAD_POLL_TASK_EXECUTOR_NAME = "threadPollTaskExecutor";
 
     public static final String TELEGRAM_BOT_EXCEPTION_MESSAGE = "Error in telegram bot!";
+
+    public static final String JSON_PARSE_EXCEPTION_MESSAGE = "Error parsing JSON!";
 }

@@ -2,6 +2,8 @@ package lma.repository;
 
 import jakarta.persistence.LockModeType;
 import lma.entity.Model;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -13,8 +15,8 @@ import java.util.List;
 @Repository
 public interface ModelRepository extends JpaRepository<Model, Integer> {
 
-    @Query("SELECT DISTINCT u.models FROM User u")
-    List<Model> findAllSubscribedModels();
+    @Query("SELECT DISTINCT m FROM Model m WHERE m IN (SELECT u.models FROM User u)")
+    Page<Model> findAllSubscribedModels(Pageable pageable);
 
     List<Model> findAllByBrand_Id(Long brandId);
 

@@ -3,6 +3,8 @@ package lma.service;
 import lma.entity.Model;
 import lma.repository.ModelRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +38,7 @@ public class ModelService {
         return modelRepository.save(model);
     }
 
-    public List<Model> findAllSubscribedModels(){
-        return modelRepository.findAllSubscribedModels();
+    public Page<Model> findAllSubscribedModels(Pageable pageable){
+        return modelRepository.findAllSubscribedModels(pageable);
     }
 }

@@ -17,8 +17,8 @@ import static lma.constants.BotConstants.BOT_TOKEN;
 
 
 @EnableScheduling
-@EnableTransactionManagement(proxyTargetClass = true)
 @EnableFeignClients
+@EnableTransactionManagement(proxyTargetClass = true)
 @SpringBootApplication
 public class TelegramCarBotApplication {
 

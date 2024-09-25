@@ -60,7 +60,7 @@ public class CarBot extends AbilityBot {
         this.botResponseHandler = botResponseHandler;
     }
 
-    @Async(THREAD_POLL_TASK_EXECUTOR_NAME)
+    //@Async(THREAD_POLL_TASK_EXECUTOR_NAME)?????
     public void sendMessage(SendMessage sendMessage) {
         if (!sendMessage.getChatId().equals(CHAT_ID_FOR_EMPTY_MESSAGE)) {
             silent.execute(sendMessage);

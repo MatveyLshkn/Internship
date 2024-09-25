@@ -127,6 +127,7 @@ public class BotResponseHandler {
                 .filter(modelInList -> modelInList.getId() == modelId)
                 .findFirst()
                 .isPresent()) {
+
             return buildSendMessageWithReplyMarkup(
                     user.getChatId(),
                     ALREADY_SUBSCRIBED_MESSAGE,
@@ -197,7 +198,7 @@ public class BotResponseHandler {
     }
 
 
-    public SendMessage getBrandsAsInlineKeyboardInSendMessage(Long chatId) {
+    private SendMessage getBrandsAsInlineKeyboardInSendMessage(Long chatId) {
         List<Brand> brands = brandService.findAll();
         List<InlineKeyboardRow> rows = new ArrayList<>();
 
